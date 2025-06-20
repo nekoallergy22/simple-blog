@@ -1,0 +1,84 @@
+'use client';
+
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+interface MarkdownRendererProps {
+  content: string;
+}
+
+export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  return (
+    <div className="prose prose-lg max-w-none">
+      <ReactMarkdown
+        components={{
+          code({ node, inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            return !inline && match ? (
+              <SyntaxHighlighter
+                style={tomorrow}
+                language={match[1]}
+                PreTag="div"
+                {...props}
+              >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            ) : (
+              <code className={className} {...props}>
+                {children}
+              </code>
+            );
+          },
+          h1: ({ children }) => (
+            <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
+              {children}
+            </h1>
+          ),
+          h2: ({ children }) => (
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">
+              {children}
+            </h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+              {children}
+            </h3>
+          ),
+          p: ({ children }) => (
+            <p className="text-gray-700 leading-relaxed mb-4">
+              {children}
+            </p>
+          ),
+          ul: ({ children }) => (
+            <ul className="list-disc list-inside space-y-2 mb-4 text-gray-700">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="list-decimal list-inside space-y-2 mb-4 text-gray-700">
+              {children}
+            </ol>
+          ),
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 bg-blue-50 text-gray-700 italic">
+              {children}
+            </blockquote>
+          ),
+          a: ({ href, children }) => (
+            <a 
+              href={href} 
+              className="text-blue-600 hover:text-blue-800 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {children}
+            </a>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
