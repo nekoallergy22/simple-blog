@@ -38,12 +38,13 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mt-16 mb-6 pb-2 border-b border-gray-200 text-center">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3 flex items-center">
+              <span className="text-blue-600 mr-2">■</span>
               {children}
             </h3>
           ),
@@ -53,14 +54,19 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             </p>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc list-inside space-y-2 mb-4 text-gray-700">
+            <ul className="list-disc list-inside mb-4 text-gray-700 [&>li]:py-0">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-inside space-y-2 mb-4 text-gray-700">
+            <ol className="list-decimal list-inside mb-4 text-gray-700 [&>li]:py-0">
               {children}
             </ol>
+          ),
+          li: ({ children }) => (
+            <li className="leading-normal mb-1">
+              {children}
+            </li>
           ),
           blockquote: ({ children }) => (
             <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 bg-blue-50 text-gray-700 italic">

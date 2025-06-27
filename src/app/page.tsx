@@ -63,8 +63,8 @@ export default async function HomePage() {
             const levelInfo = getLevelInfo(level);
             
             return (
-              <section key={level} className="space-y-4">
-                <div className={`rounded-lg border-l-4 ${levelInfo.barColor} bg-white p-4 shadow-sm`}>
+              <section key={level} id={`level-${level}`} className="space-y-4">
+                <div>
                   <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-bold text-gray-900">{levelInfo.title}</h2>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${levelInfo.color}`}>
