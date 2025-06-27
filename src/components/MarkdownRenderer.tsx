@@ -1,6 +1,7 @@
 'use client';
 
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -12,6 +13,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <div className="prose prose-lg max-w-none">
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
@@ -74,6 +76,38 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             >
               {children}
             </a>
+          ),
+          table: ({ children }) => (
+            <div className="overflow-x-auto mb-4">
+              <table className="min-w-full border-collapse border border-gray-300">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-gray-50">
+              {children}
+            </thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody>
+              {children}
+            </tbody>
+          ),
+          tr: ({ children }) => (
+            <tr className="border-b border-gray-200">
+              {children}
+            </tr>
+          ),
+          th: ({ children }) => (
+            <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900 bg-gray-50">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-gray-300 px-4 py-2 text-gray-700">
+              {children}
+            </td>
           ),
         }}
       >

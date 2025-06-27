@@ -21,6 +21,8 @@ export async function getAllPosts(): Promise<Post[]> {
           slug: data.slug,
           category: data.category,
           date: data.date,
+          difficulty: data.difficulty,
+          number: data.number,
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
         });
@@ -55,6 +57,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
           slug: data.slug,
           category: data.category,
           date: data.date,
+          difficulty: data.difficulty,
+          number: data.number,
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
         };
@@ -90,6 +94,8 @@ export async function getPostsByCategory(category: string): Promise<Post[]> {
           slug: data.slug,
           category: data.category,
           date: data.date,
+          difficulty: data.difficulty,
+          number: data.number,
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
         });

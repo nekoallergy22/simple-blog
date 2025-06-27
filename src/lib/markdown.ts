@@ -31,6 +31,24 @@ export function getPostsFromMarkdown(): Post[] {
     // Generate slug if not provided
     const slug = frontMatter.slug || generateSlug(fileName);
     
+    // Map difficulty to level
+    let level = frontMatter.level;
+    if (!level && frontMatter.difficulty) {
+      switch (frontMatter.difficulty) {
+        case 'basic':
+          level = 1;
+          break;
+        case 'intermediate':
+          level = 2;
+          break;
+        case 'advanced':
+          level = 3;
+          break;
+        default:
+          level = 1;
+      }
+    }
+    
     return {
       id: slug,
       title: frontMatter.title || 'Untitled',
@@ -38,13 +56,23 @@ export function getPostsFromMarkdown(): Post[] {
       slug: slug,
       category: frontMatter.category || 'uncategorized',
       date: frontMatter.date || new Date().toISOString().split('T')[0],
+      difficulty: frontMatter.difficulty,
+      level: level,
+      number: frontMatter.number,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
   });
 
-  // Sort by date (newest first)
-  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Sort by number (ascending) then by date
+  return posts.sort((a, b) => {
+    if (a.number && b.number) {
+      return a.number - b.number;
+    }
+    if (a.number && !b.number) return -1;
+    if (!a.number && b.number) return 1;
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
 }
 
 export function getPostBySlugFromMarkdown(slug: string): Post | null {

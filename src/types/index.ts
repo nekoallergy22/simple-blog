@@ -5,6 +5,9 @@ export interface Post {
   slug: string;
   category: string;
   date: string;
+  difficulty?: string;
+  level?: number;
+  number?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,4 +25,7 @@ export interface PostFrontMatter {
   date: string;
   category: string;
   slug?: string;
+  difficulty?: string;
+  level?: number;
+  number?: number;
 }

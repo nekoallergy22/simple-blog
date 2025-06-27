@@ -53,6 +53,12 @@ export default async function PostPage({ params }: PostPageProps) {
       notFound();
     }
 
+    // Get all posts to find previous and next posts
+    const allPosts = await getAllPosts();
+    const currentIndex = allPosts.findIndex(p => p.slug === post.slug);
+    const previousPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+    const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleDateString('ja-JP', {
         year: 'numeric',
@@ -61,8 +67,19 @@ export default async function PostPage({ params }: PostPageProps) {
       });
     };
 
+    // Levelごとの色を定義
+    const getLevelColor = (level?: number) => {
+      const colors = {
+        1: 'bg-green-500',
+        2: 'bg-blue-500', 
+        3: 'bg-purple-500',
+        'default': 'bg-gray-500'
+      };
+      return colors[level as keyof typeof colors] || colors.default;
+    };
+
     return (
-      <article className="max-w-4xl mx-auto">
+      <article className="max-w-5xl mx-auto">
         <div className="mb-8">
           <Link 
             href="/" 
@@ -80,9 +97,14 @@ export default async function PostPage({ params }: PostPageProps) {
           </Link>
           
           <div className="flex flex-wrap items-center gap-4 mb-6">
-            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-              {post.category}
+            <span className={`inline-block ${getLevelColor(post.level)} text-white text-sm font-medium px-3 py-1 rounded-full`}>
+              {post.category === 'ai-course' ? 'AIコース' : post.category}
             </span>
+            {post.number && (
+              <span className="inline-block bg-gray-100 text-gray-700 text-sm font-bold px-3 py-1 rounded-full">
+                No.{post.number.toString().padStart(2, '0')}
+              </span>
+            )}
             <time className="text-gray-500 text-sm">
               {formatDate(post.date)}
             </time>
@@ -97,13 +119,44 @@ export default async function PostPage({ params }: PostPageProps) {
           <MarkdownRenderer content={post.content} />
         </div>
 
-        <div className="mt-8 flex justify-center">
-          <Link 
-            href="/" 
-            className="btn-primary"
-          >
-            記事一覧に戻る
-          </Link>
+        {/* Navigation buttons */}
+        <div className="mt-8 flex items-center justify-between">
+          <div className="flex-1">
+            {previousPost && (
+              <Link 
+                href={`/posts/${previousPost.slug}`}
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors group"
+              >
+                <svg className="mr-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </Link>
+            )}
+          </div>
+          
+          <div className="mx-4">
+            <Link 
+              href="/" 
+              className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              記事一覧に戻る
+            </Link>
+          </div>
+          
+          <div className="flex-1 flex justify-end">
+            {nextPost && (
+              <Link 
+                href={`/posts/${nextPost.slug}`}
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors group"
+              >
+                Next
+                <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            )}
+          </div>
         </div>
       </article>
     );
