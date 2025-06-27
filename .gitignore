@@ -27,6 +27,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.deployment
 
 # vercel
 .vercel
@@ -34,5 +35,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase & GCP credentials (秘匿情報)
+service-account-key.json
+firebase-debug.log
+
+# Functions dependencies
+functions/node_modules/
+functions/lib/
+
+# Deployment files
+pglite-debug.log
+memo
 
 prompt.md

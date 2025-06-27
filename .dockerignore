@@ -11,3 +11,10 @@ README.md
 .gitignore
 .next
 .vercel
+functions
+scripts
+*.md
+DEPLOYMENT_GUIDE.md
+memo
+service-account-key.json
+firebase-debug.log

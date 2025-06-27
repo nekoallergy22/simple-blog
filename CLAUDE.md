@@ -123,9 +123,38 @@ slug: "article-slug"
 ```
 
 ### サンプル記事について
-- AIについて初歩から教えるコース記事（10記事）
+- AIについて初歩から教えるコース記事（24記事に拡張済み）
 - カテゴリ：`ai-course`（AIコース）
 - 順序立てた学習コンテンツとして構成
+
+## 現在のプロジェクト状況（2024-06-27）
+
+### 実装済み機能
+- **基本サイト構造**: Next.js 14.2.5 + App Router完全実装
+- **Firebase連携**: Firestore Database統合とデータ保存機能
+- **Markdown処理**: react-markdown + syntax-highlighter実装
+- **レスポンシブUI**: Tailwind CSS + @tailwindcss/typography
+- **記事管理**: 24記事のAI学習コース完備
+- **デプロイ準備**: Dockerfile, sync-mdスクリプト完成
+
+### 現在の記事構成
+```
+posts/ (24記事)
+├── 基礎編 (01-10): AI基礎からNLP、コンピュータビジョンまで
+├── 応用編 (11-20): ニューラルネット、深層学習、強化学習
+└── 実践編 (21-24): システム設計、カスタムニューラルネット
+```
+
+### 技術スタック（実装済み）
+- **フロントエンド**: React 18.3.1, Next.js 14.2.5, TypeScript 5.5.4
+- **スタイリング**: Tailwind CSS 3.4.7, レスポンシブ対応済み  
+- **バックエンド**: Firebase 10.12.2, Firebase Admin 12.1.1
+- **開発環境**: ESLint, Prettier, TypeScript設定完了
+
+### Git状況
+- **ブランチ**: main (クリーンな状態)
+- **最新コミット**: UI改善完了
+- **記事同期**: sync-mdスクリプトで自動化済み
 
 ## 開発コマンド
 
