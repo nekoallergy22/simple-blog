@@ -199,17 +199,17 @@ gh secret set NEXT_PUBLIC_FIREBASE_APP_ID --body 'YOUR_APP_ID' --repo 'YOUR_REPO
 取得した Firebase 設定で `.env.deployment` を編集：
 
 ```bash
-# Firebase Web App Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyB5ewQvp43KLLNfYMmlwLPCyfnpjQZ9Euk
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=pid-my-portfolio-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=pid-my-portfolio-project
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=pid-my-portfolio-project.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=985011634251
-NEXT_PUBLIC_FIREBASE_APP_ID=1:985011634251:web:e1a772749cb719ae488dce
+# Firebase Web App Configuration（サンプル値）
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyB5ewQvp43KLLNfYMmlwLP...（Firebase Consoleから取得）
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456789
 
 # プロジェクト設定
-GCP_PROJECT_ID=pid-my-portfolio-project
-GITHUB_REPO=YOUR_USERNAME/simple-blog
+GCP_PROJECT_ID=your-project-id
+GITHUB_REPO=your-username/simple-blog
 ```
 
 **ステップ3: GitHub Secrets 自動設定**
