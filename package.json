@@ -1,5 +1,5 @@
 {
-  "name": "simple-blog",
+  "name": "tech-master",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
   "dependencies": {
     "@tailwindcss/typography": "0.5.13",
     "@types/react-syntax-highlighter": "15.5.13",
+    "dotenv": "^17.0.0",
     "firebase": "10.12.2",
     "firebase-admin": "12.1.1",
     "firebase-tools": "^14.9.0",

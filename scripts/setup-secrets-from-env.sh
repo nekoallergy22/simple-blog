@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# .env.deployment からGitHub Secretsを設定するスクリプト
+# .env.local からGitHub Secretsを設定するスクリプト
 # 使用方法: ./scripts/setup-secrets-from-env.sh
 
 set -e
 
-ENV_FILE=".env.deployment"
+ENV_FILE=".env.local"
 
 echo "🔐 GitHub Secrets自動設定（環境変数ファイルから）"
 echo ""

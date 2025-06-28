@@ -5,6 +5,19 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'w-16',
+    'h-16',
+    'bg-gradient-to-br',
+    'from-blue-50',
+    'to-purple-50',
+    'border-2',
+    'border-blue-200',
+    'text-blue-600',
+    'text-xl',
+    'rounded-full',
+    'shadow-sm'
+  ],
   theme: {
     extend: {
       typography: {

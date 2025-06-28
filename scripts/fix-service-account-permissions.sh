@@ -2,16 +2,16 @@
 
 # Fix Service Account Permissions for Artifact Registry
 # Usage: ./scripts/fix-service-account-permissions.sh [PROJECT_ID]
-# If PROJECT_ID is not provided, it will be read from .env.deployment
+# If PROJECT_ID is not provided, it will be read from .env.local
 
 set -e
 
-# Load environment variables from .env.deployment
-if [ -f ".env.deployment" ]; then
-    export $(grep -v '^#' .env.deployment | xargs)
-    echo "📋 Loaded environment from .env.deployment"
+# Load environment variables from .env.local
+if [ -f ".env.local" ]; then
+    export $(grep -v '^#' .env.local | xargs)
+    echo "📋 Loaded environment from .env.local"
 else
-    echo "⚠️  Warning: .env.deployment not found"
+    echo "⚠️  Warning: .env.local not found"
 fi
 
 PROJECT_ID=${1:-$GCP_PROJECT_ID}
@@ -20,7 +20,7 @@ SERVICE_ACCOUNT_NAME="simple-blog-deploy"
 if [ -z "$PROJECT_ID" ]; then
     echo "❌ Error: PROJECT_ID is required"
     echo "Usage: $0 [PROJECT_ID]"
-    echo "Or set GCP_PROJECT_ID in .env.deployment"
+    echo "Or set GCP_PROJECT_ID in .env.local"
     exit 1
 fi
 

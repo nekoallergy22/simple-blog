@@ -25,14 +25,14 @@ cd simple-blog
 # 2. 依存関係インストール
 npm install
 
-# 3. GCP・Firebase自動設定（.env.deploymentから自動読み取り）
+# 3. GCP・Firebase自動設定（.env.localから自動読み取り）
 ./scripts/setup-gcp.sh
 ./scripts/fix-service-account-permissions.sh
 ./scripts/setup-artifact-registry.sh
 ./scripts/setup-firebase-files.sh
 
 # 4. Firebase Console でWebアプリ作成
-# → .env.deployment ファイル編集
+# → .env.local ファイル編集
 
 # 5. GitHub Secrets一括設定
 ./scripts/setup-secrets-from-env.sh
@@ -77,7 +77,7 @@ Markdownで記事を書いてください。
 - ✅ **Artifact Registry**: Container Registry移行完了
 - ✅ **GitHub Secrets**: 12個設定完了
 - ✅ **記事数**: 24記事（AI学習コース）
-- ✅ **自動化スクリプト**: .env.deployment対応完了
+- ✅ **自動化スクリプト**: .env.local対応完了
 - ⏳ **デプロイ状況**: [GitHub Actions で確認](https://github.com/nekoallergy22/simple-blog/actions)
 
 ## 🔄 日常の使い方
@@ -124,7 +124,7 @@ npm run sync-md
 - `./scripts/setup-secrets-from-env.sh`: GitHub Secrets一括設定
 
 ### セットアップ（初回のみ）
-- `./scripts/setup-gcp.sh`: GCP環境構築（.env.deploymentから自動読み取り）
+- `./scripts/setup-gcp.sh`: GCP環境構築（.env.localから自動読み取り）
 - `./scripts/fix-service-account-permissions.sh`: サービスアカウント権限修正
 - `./scripts/setup-artifact-registry.sh`: Artifact Registry設定
 - `./scripts/setup-firebase-files.sh`: Firebase設定
@@ -150,7 +150,7 @@ simple-blog/
 ├── functions/            # Firebase Functions
 ├── firebase.json        # Firebase設定
 ├── Dockerfile          # Cloud Run用
-└── .env.deployment     # 環境変数（Git管理外）
+└── .env.local          # 環境変数（Git管理外）
 ```
 
 ## 🔗 関連リンク

@@ -154,7 +154,7 @@ npm run lint
 
 ### 自動化セットアップ
 ```bash
-# 初回セットアップ（.env.deploymentから自動読み取り）
+# 初回セットアップ（.env.localから自動読み取り）
 ./scripts/setup-gcp.sh
 ./scripts/fix-service-account-permissions.sh
 ./scripts/setup-artifact-registry.sh

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# シンプルBlogアプリ - 開発戦略・アーキテクチャ
+# Tech-Master - 技術学習プラットフォーム 開発戦略・アーキテクチャ
 
 ## 基本コンセプト & アーキテクチャ
 
@@ -11,7 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **バックエンド**: Firebase (Firestore, Functions, Storage)
 - **ホスティング**: Google Cloud Run (コンテナ化)
 - **デプロイ**: GitHub Actions CI/CD
-- **記事管理**: ローカルMarkdownファイル → Firestore同期
+- **記事管理**: セクション別ローカルMarkdownファイル → Firestore同期
+- **ルーティング**: セクション別ルート (/ai, /python, /datascience, /tensorflow)
 
 ### ハイブリッドデータ戦略
 - **Firebase優先**: 本番環境ではFirestoreから記事取得
@@ -79,7 +80,7 @@ npm run sync-md
 
 ### セットアップ・初期設定
 ```bash
-# 初回セットアップ（.env.deploymentから自動読み取り）
+# 初回セットアップ（.env.localから自動読み取り）
 ./scripts/setup-gcp.sh
 ./scripts/fix-service-account-permissions.sh
 ./scripts/setup-artifact-registry.sh
@@ -94,27 +95,36 @@ npm run sync-md
 ### アプリケーション構造（src/）
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx         # ルートレイアウト
-│   ├── page.tsx          # ホームページ（記事一覧）
-│   ├── posts/[slug]/     # 動的記事ページ
-│   └── globals.css       # グローバルスタイル
+├── app/                          # Next.js App Router
+│   ├── layout.tsx               # ルートレイアウト（Tech-Master全体）
+│   ├── page.tsx                # ホームページ（全セクション表示）
+│   ├── ai/                     # AI学習セクション
+│   │   ├── page.tsx           # AI学習コース一覧
+│   │   └── posts/[slug]/      # AI記事ページ
+│   ├── python/                 # Python学習セクション
+│   │   └── page.tsx           # Python学習コース（準備中）
+│   ├── datascience/           # データサイエンス学習セクション
+│   │   └── page.tsx           # データサイエンス学習コース（準備中）
+│   ├── tensorflow/            # TensorFlow学習セクション
+│   │   └── page.tsx           # TensorFlow学習コース（準備中）
+│   └── globals.css            # グローバルスタイル
 ├── components/
-│   ├── MarkdownRenderer.tsx  # Markdown描画コンポーネント
-│   └── PostCard.tsx         # 記事カード（一覧用）
+│   ├── MarkdownRenderer.tsx   # Markdown描画コンポーネント
+│   └── PostCard.tsx          # 記事カード（セクション対応）
 ├── lib/
-│   ├── posts.ts           # 記事取得ロジック（Firebase+Markdown）
-│   ├── firebase.ts        # Firebase client設定
-│   ├── firebase-admin.ts  # Firebase admin設定
-│   └── markdown.ts        # Markdownファイル読み込み
+│   ├── posts.ts              # 記事取得ロジック（セクション対応）
+│   ├── firebase.ts           # Firebase client設定
+│   ├── firebase-admin.ts     # Firebase admin設定
+│   └── markdown.ts           # Markdownファイル読み込み
 └── types/
-    └── index.ts          # TypeScript型定義
+    └── index.ts             # TypeScript型定義（Section型追加）
 ```
 
-### 記事管理（posts/）
-- **24記事収録**: AI学習コース（基礎→応用→実践）
+### 記事管理
+- **AIセクション**: 24記事収録（基礎→応用→実践）
 - **ファイル命名**: `XX-slug-format.md`（番号順）
-- **カテゴリ**: `ai-course`（統一）
+- **セクション構造**: 各セクション専用のルート（/ai/posts/[slug]）
+- **既存記事**: `ai-course`カテゴリはAIセクションに自動マッピング
 
 ### Firebase設定
 - **Firestore Collections**: `posts`（記事データ）
@@ -134,10 +144,11 @@ src/
 ---
 title: "記事タイトル"
 date: "2024-01-01" 
-category: "ai-course"
+category: "ai-course"        # 既存はそのまま維持
+section: "ai"               # 新規：セクション指定（ai, python, datascience, tensorflow）
 slug: "unique-slug"
-difficulty: "beginner"    # オプション
-number: 1                 # オプション（順序）
+difficulty: "beginner"      # オプション
+number: 1                   # オプション（順序）
 ---
 
 # 記事内容
@@ -196,11 +207,13 @@ npm run build  # ビルドエラー確認
 ## 現在の状況（2025-06-28）
 
 ### 実装完了
-- ✅ Next.js 14 + App Router完全設定
-- ✅ Firebase Firestore統合
+- ✅ Next.js 14 + App Router完全設定（セクション別ルーティング）
+- ✅ Firebase Firestore統合（セクション対応）
 - ✅ Markdown処理（react-markdown + syntax highlighting）
 - ✅ レスポンシブUI（Tailwind CSS）
-- ✅ 24記事AI学習コース
+- ✅ Tech-Master統合プラットフォーム
+- ✅ AIセクション：24記事AI学習コース（/ai）
+- ✅ Python/DataScience/TensorFlowセクション（準備中）
 - ✅ GitHub Actions CI/CD
 - ✅ Cloud Run Dockerデプロイ
 - ✅ 自動化スクリプト一式
@@ -208,4 +221,4 @@ npm run build  # ビルドエラー確認
 ### Git状況
 - **ブランチ**: main（クリーン）
 - **デプロイ**: GitHub Actions自動実行
-- **最新コミット**: publicディレクトリ追加
+- **最新変更**: Simple Blog → Tech-Master変更、セクション別ルーティング実装

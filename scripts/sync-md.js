@@ -4,6 +4,9 @@ const matter = require('gray-matter');
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
+// Load environment variables
+require('dotenv').config({ path: '.env.local' });
+
 // Initialize Firebase Admin
 if (!process.env.FIREBASE_PROJECT_ID) {
   console.error('Firebase configuration not found. Please set environment variables.');
@@ -48,65 +51,81 @@ async function syncMarkdownFiles() {
     return;
   }
 
-  const files = fs.readdirSync(postsDir).filter(file => file.endsWith('.md'));
-  
-  if (files.length === 0) {
-    console.log('No markdown files found in posts directory.');
-    return;
-  }
+  const sections = ['ai', 'python', 'datascience', 'tensorflow', 'git', 'docker', 'linux'];
+  let totalFiles = 0;
 
-  console.log(`Found ${files.length} markdown files. Syncing to Firestore...`);
+  for (const section of sections) {
+    const sectionDir = path.join(postsDir, section);
+    
+    if (!fs.existsSync(sectionDir)) {
+      console.log(`Section directory ${section} not found, skipping...`);
+      continue;
+    }
 
-  for (const file of files) {
-    try {
-      const filePath = path.join(postsDir, file);
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      const { data: frontMatter, content } = matter(fileContent);
-      
-      // Validate required frontmatter fields
-      if (!frontMatter.title || !frontMatter.date) {
-        console.warn(`Skipping ${file}: Missing required frontmatter (title, date)`);
-        continue;
+    const files = fs.readdirSync(sectionDir).filter(file => file.endsWith('.md'));
+    
+    if (files.length === 0) {
+      console.log(`No markdown files found in ${section} section.`);
+      continue;
+    }
+
+    console.log(`Found ${files.length} markdown files in ${section} section. Syncing to Firestore...`);
+    totalFiles += files.length;
+
+    for (const file of files) {
+      try {
+        const filePath = path.join(sectionDir, file);
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const { data: frontMatter, content } = matter(fileContent);
+        
+        // Validate required frontmatter fields
+        if (!frontMatter.title || !frontMatter.date) {
+          console.warn(`Skipping ${section}/${file}: Missing required frontmatter (title, date)`);
+          continue;
+        }
+
+        // Generate slug from filename if not provided
+        const slug = frontMatter.slug || generateSlug(file);
+        
+        const postData = {
+          title: frontMatter.title,
+          content: content.trim(),
+          slug: slug,
+          category: frontMatter.category || 'uncategorized',
+          section: frontMatter.section || section,
+          date: frontMatter.date,
+          difficulty: frontMatter.difficulty,
+          number: frontMatter.number,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        // Check if post already exists
+        const existingPost = await db.collection('posts')
+          .where('slug', '==', slug)
+          .limit(1)
+          .get();
+
+        if (!existingPost.empty) {
+          // Update existing post
+          const docId = existingPost.docs[0].id;
+          await db.collection('posts').doc(docId).update({
+            ...postData,
+            createdAt: existingPost.docs[0].data().createdAt, // Preserve original creation date
+          });
+          console.log(`Updated: ${section}/${file} -> ${slug}`);
+        } else {
+          // Create new post
+          await db.collection('posts').add(postData);
+          console.log(`Created: ${section}/${file} -> ${slug}`);
+        }
+      } catch (error) {
+        console.error(`Error processing ${section}/${file}:`, error);
       }
-
-      // Generate slug from filename if not provided
-      const slug = frontMatter.slug || generateSlug(file);
-      
-      const postData = {
-        title: frontMatter.title,
-        content: content.trim(),
-        slug: slug,
-        category: frontMatter.category || 'uncategorized',
-        date: frontMatter.date,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      // Check if post already exists
-      const existingPost = await db.collection('posts')
-        .where('slug', '==', slug)
-        .limit(1)
-        .get();
-
-      if (!existingPost.empty) {
-        // Update existing post
-        const docId = existingPost.docs[0].id;
-        await db.collection('posts').doc(docId).update({
-          ...postData,
-          createdAt: existingPost.docs[0].data().createdAt, // Preserve original creation date
-        });
-        console.log(`Updated: ${file} -> ${slug}`);
-      } else {
-        // Create new post
-        await db.collection('posts').add(postData);
-        console.log(`Created: ${file} -> ${slug}`);
-      }
-    } catch (error) {
-      console.error(`Error processing ${file}:`, error);
     }
   }
 
-  console.log('Markdown sync completed!');
+  console.log(`Markdown sync completed! Processed ${totalFiles} files total.`);
 }
 
 // Run the sync

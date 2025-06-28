@@ -24,7 +24,7 @@ Next.js + Firebase + Cloud Run を使用したシンプルブログアプリの*
 - ✅ **CI/CD**: GitHub Actions ワークフロー構築完了
 - ✅ **設定**: 12個のGitHub Secrets設定完了 
 - ✅ **コンテンツ**: 24記事のAI学習コース収録済み
-- ✅ **自動化**: `.env.deployment` からのSecrets一括設定対応
+- ✅ **自動化**: `.env.local` からのSecrets一括設定対応
 - ✅ **セキュリティ**: `.gitignore` で機密情報保護設定済み
 - 🚀 **現在**: 自動デプロイシステム稼働中
 
@@ -63,7 +63,7 @@ npx firebase --version  # 14.9.0 であることを確認
 ### 2.1 GCP 初期設定
 
 ```bash
-# GCP 設定スクリプト実行（.env.deploymentから自動読み取り）
+# GCP 設定スクリプト実行（.env.localから自動読み取り）
 ./scripts/setup-gcp.sh
 
 # または明示的にプロジェクトID指定
@@ -93,7 +93,7 @@ Container Registryが非推奨になったため、Artifact Registryを設定：
 ### 2.3 Firebase 設定
 
 ```bash
-# Firebase API 有効化（.env.deploymentから自動読み取り）
+# Firebase API 有効化（.env.localから自動読み取り）
 ./scripts/setup-firebase-existing.sh
 ```
 
@@ -106,12 +106,12 @@ Container Registryが非推奨になったため、Artifact Registryを設定：
 ### 2.4 Firebase 設定ファイル作成
 
 ```bash
-# Firebase 設定ファイル作成（.env.deploymentから自動読み取り）
+# Firebase 設定ファイル作成（.env.localから自動読み取り）
 ./scripts/setup-firebase-files.sh
 
 # Firebase プロジェクト設定
 export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
-npx firebase use $(grep GCP_PROJECT_ID .env.deployment | cut -d'=' -f2)
+npx firebase use $(grep GCP_PROJECT_ID .env.local | cut -d'=' -f2)
 ```
 
 ## 3. Firebase Functions デプロイ
@@ -208,7 +208,7 @@ gh secret set NEXT_PUBLIC_FIREBASE_APP_ID --body 'YOUR_APP_ID' --repo 'YOUR_REPO
 4. 設定情報をコピー
 
 **ステップ2: 環境変数ファイル作成**
-取得した Firebase 設定で `.env.deployment` を編集：
+取得した Firebase 設定で `.env.local` を編集：
 
 ```bash
 # Firebase Web App Configuration（サンプル値）
@@ -416,14 +416,14 @@ Markdown で記述された本文内容
 
 **新規セットアップの場合：**
 ```bash
-# 1. 基本環境構築（.env.deploymentから自動読み取り）
+# 1. 基本環境構築（.env.localから自動読み取り）
 ./scripts/setup-gcp.sh
 ./scripts/fix-service-account-permissions.sh
 ./scripts/setup-artifact-registry.sh
 ./scripts/setup-firebase-files.sh
 
 # 2. Firebase Console でWebアプリ作成
-# → .env.deployment ファイル編集
+# → .env.local ファイル編集
 
 # 3. GitHub Secrets 一括設定
 ./scripts/setup-secrets-from-env.sh

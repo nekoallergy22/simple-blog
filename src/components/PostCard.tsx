@@ -36,8 +36,14 @@ export default function PostCard({ post }: PostCardProps) {
     return labels[category as keyof typeof labels] || category;
   };
 
+  // Generate the correct URL based on section
+  const getPostUrl = (post: Post) => {
+    const section = post.section || (post.category === 'ai-course' ? 'ai' : 'ai');
+    return `/${section}/posts/${post.slug}`;
+  };
+
   return (
-    <Link href={`/posts/${post.slug}`}>
+    <Link href={getPostUrl(post)}>
       <article className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer group">
         {/* カラーバー */}
         <div className={`h-1 ${getLevelColor(post.level)}`} />
