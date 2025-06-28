@@ -79,6 +79,7 @@ Gitベースのワークフローを使用した個人ブログ管理・公開�
 
 ### インフラ
 - Google Cloud Run (ホスティング)
+- Artifact Registry (Dockerイメージ保存、Container Registry後継)
 - GitHub Actions (CI/CD)
 - Firebase (バックエンドサービス)
 
@@ -146,6 +147,21 @@ npm run sync-md
 
 # 型チェック
 npm run type-check
+
+# ESLint実行
+npm run lint
+```
+
+### 自動化セットアップ
+```bash
+# 初回セットアップ（.env.deploymentから自動読み取り）
+./scripts/setup-gcp.sh
+./scripts/fix-service-account-permissions.sh
+./scripts/setup-artifact-registry.sh
+./scripts/setup-firebase-files.sh
+
+# GitHub Secrets設定
+./scripts/setup-secrets-from-env.sh
 ```
 
 ### コンテンツ作成
@@ -162,7 +178,10 @@ npm run type-check
 - Cloud Run デプロイ
 
 ## サンプルコンテンツ
-- **AIコース記事**: AIについて初歩から学べる10記事のシリーズ
+- **AIコース記事**: AIについて初歩から学べる24記事のシリーズ
+  - 基礎編 (01-10): AI基礎からNLP、コンピュータビジョンまで
+  - 応用編 (11-20): ニューラルネット、深層学習、強化学習
+  - 実践編 (21-24): システム設計、カスタムニューラルネット
 - **カテゴリ**: `ai-course`（AIコース）として統一
 - **記事カードデザイン**: タイトル、カテゴリタグ、日付のみのシンプルデザイン
 - **カラーコーディング**: カテゴリごとに異なる色のバーとタグ

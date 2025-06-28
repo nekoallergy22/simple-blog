@@ -63,26 +63,38 @@ npx firebase --version  # 14.9.0 であることを確認
 ### 2.1 GCP 初期設定
 
 ```bash
-# GCP 設定スクリプト実行
-./scripts/setup-gcp.sh YOUR_PROJECT_ID
+# GCP 設定スクリプト実行（.env.deploymentから自動読み取り）
+./scripts/setup-gcp.sh
 
-# 例: ./scripts/setup-gcp.sh pid-my-portfolio-project
+# または明示的にプロジェクトID指定
+./scripts/setup-gcp.sh YOUR_PROJECT_ID
 ```
 
 このスクリプトが実行する内容：
 - Google Cloud ログイン
 - プロジェクト設定
-- 必要なAPI有効化（Cloud Run, Cloud Build, Container Registry等）
-- Artifact Registry リポジトリ作成
+- 必要なAPI有効化（Cloud Run, Cloud Build, Artifact Registry等）
 - サービスアカウント作成
-- 権限設定
+- 基本権限設定
 - サービスアカウントキー作成（`service-account-key.json`）
 
-### 2.2 Firebase 設定
+### 2.2 Artifact Registry対応（重要）
+
+Container Registryが非推奨になったため、Artifact Registryを設定：
 
 ```bash
-# Firebase API 有効化
-./scripts/setup-firebase-existing.sh YOUR_PROJECT_ID
+# サービスアカウント権限修正
+./scripts/fix-service-account-permissions.sh
+
+# Artifact Registry設定
+./scripts/setup-artifact-registry.sh
+```
+
+### 2.3 Firebase 設定
+
+```bash
+# Firebase API 有効化（.env.deploymentから自動読み取り）
+./scripts/setup-firebase-existing.sh
 ```
 
 **手動操作が必要**：
@@ -91,15 +103,15 @@ npx firebase --version  # 14.9.0 であることを確認
 3. 作成したプロジェクトIDを選択
 4. Firebase を追加
 
-### 2.3 Firebase 設定ファイル作成
+### 2.4 Firebase 設定ファイル作成
 
 ```bash
-# Firebase 設定ファイル作成
-./scripts/setup-firebase-files.sh YOUR_PROJECT_ID
+# Firebase 設定ファイル作成（.env.deploymentから自動読み取り）
+./scripts/setup-firebase-files.sh
 
 # Firebase プロジェクト設定
 export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
-npx firebase use YOUR_PROJECT_ID
+npx firebase use $(grep GCP_PROJECT_ID .env.deployment | cut -d'=' -f2)
 ```
 
 ## 3. Firebase Functions デプロイ
@@ -404,9 +416,11 @@ Markdown で記述された本文内容
 
 **新規セットアップの場合：**
 ```bash
-# 1. 基本環境構築
-./scripts/setup-gcp.sh YOUR_PROJECT_ID
-./scripts/setup-firebase-files.sh YOUR_PROJECT_ID
+# 1. 基本環境構築（.env.deploymentから自動読み取り）
+./scripts/setup-gcp.sh
+./scripts/fix-service-account-permissions.sh
+./scripts/setup-artifact-registry.sh
+./scripts/setup-firebase-files.sh
 
 # 2. Firebase Console でWebアプリ作成
 # → .env.deployment ファイル編集

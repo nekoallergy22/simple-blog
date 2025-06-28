@@ -77,6 +77,18 @@ npm run sync-md
 ./scripts/deploy-cloudrun.sh
 ```
 
+### セットアップ・初期設定
+```bash
+# 初回セットアップ（.env.deploymentから自動読み取り）
+./scripts/setup-gcp.sh
+./scripts/fix-service-account-permissions.sh
+./scripts/setup-artifact-registry.sh
+./scripts/setup-firebase-files.sh
+
+# GitHub Secrets設定
+./scripts/setup-secrets-from-env.sh
+```
+
 ## プロジェクト構造
 
 ### アプリケーション構造（src/）
@@ -111,8 +123,9 @@ src/
 
 ### GitHub Actions
 - **トリガー**: mainブランチpush + 手動実行
-- **処理流**: Markdown同期 → ビルド → Dockerイメージ作成 → Cloud Runデプロイ
+- **処理流**: Markdown同期 → ビルド → Dockerイメージ作成（Artifact Registry） → Cloud Runデプロイ
 - **必要Secrets**: 12個（Firebase, GCP, GitHub設定）
+- **Dockerイメージ保存**: Artifact Registry（Container Registry後継）
 
 ## 記事管理フロー
 
@@ -160,8 +173,9 @@ Markdownで記事本文を記述
 ### よくある問題
 1. **Firebase接続エラー**: 環境変数確認、Markdownフォールバック確認
 2. **ビルドエラー**: `npm run type-check`で型エラー確認
-3. **デプロイエラー**: GitHub Actions logs確認
+3. **デプロイエラー**: GitHub Actions logs確認、Artifact Registry権限確認
 4. **記事表示されない**: `npm run sync-md`実行
+5. **Docker push失敗**: `./scripts/fix-service-account-permissions.sh`実行
 
 ### デバッグコマンド
 ```bash
@@ -173,6 +187,10 @@ npm run sync-md  # 同期ログ確認
 
 # ビルドテスト
 npm run build  # ビルドエラー確認
+
+# Artifact Registry権限確認
+./scripts/fix-service-account-permissions.sh
+./scripts/setup-artifact-registry.sh
 ```
 
 ## 現在の状況（2025-06-28）

@@ -25,9 +25,11 @@ cd simple-blog
 # 2. 依存関係インストール
 npm install
 
-# 3. GCP・Firebase自動設定
-./scripts/setup-gcp.sh YOUR_PROJECT_ID
-./scripts/setup-firebase-files.sh YOUR_PROJECT_ID
+# 3. GCP・Firebase自動設定（.env.deploymentから自動読み取り）
+./scripts/setup-gcp.sh
+./scripts/fix-service-account-permissions.sh
+./scripts/setup-artifact-registry.sh
+./scripts/setup-firebase-files.sh
 
 # 4. Firebase Console でWebアプリ作成
 # → .env.deployment ファイル編集
@@ -67,13 +69,15 @@ Markdownで記事を書いてください。
 
 3. Git commit & push で自動デプロイ
 
-## 📋 現在の状況（2025-06-27）
+## 📋 現在の状況（2025-06-28）
 
 - ✅ **Node.js**: 20.19.3対応
 - ✅ **Firebase CLI**: 14.9.0対応  
 - ✅ **GitHub Actions**: 完全自動デプロイ設定済み
+- ✅ **Artifact Registry**: Container Registry移行完了
 - ✅ **GitHub Secrets**: 12個設定完了
 - ✅ **記事数**: 24記事（AI学習コース）
+- ✅ **自動化スクリプト**: .env.deployment対応完了
 - ⏳ **デプロイ状況**: [GitHub Actions で確認](https://github.com/nekoallergy22/simple-blog/actions)
 
 ## 🔄 日常の使い方
@@ -120,8 +124,10 @@ npm run sync-md
 - `./scripts/setup-secrets-from-env.sh`: GitHub Secrets一括設定
 
 ### セットアップ（初回のみ）
-- `./scripts/setup-gcp.sh PROJECT_ID`: GCP環境構築
-- `./scripts/setup-firebase-files.sh PROJECT_ID`: Firebase設定
+- `./scripts/setup-gcp.sh`: GCP環境構築（.env.deploymentから自動読み取り）
+- `./scripts/fix-service-account-permissions.sh`: サービスアカウント権限修正
+- `./scripts/setup-artifact-registry.sh`: Artifact Registry設定
+- `./scripts/setup-firebase-files.sh`: Firebase設定
 - `./scripts/deploy-functions.sh`: Firebase Functions デプロイ
 
 ## 📁 プロジェクト構成
