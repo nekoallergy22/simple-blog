@@ -8,70 +8,12 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
-  API_SERVICE_NAME: tech-master-api
   REGION: asia-northeast1
   ARTIFACT_REGISTRY_LOCATION: asia-northeast1
   REPOSITORY: simple-blog-repo
 
 jobs:
-  deploy-api:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install API dependencies
-        working-directory: ./api
-        run: npm ci
-
-      - name: Build API
-        working-directory: ./api
-        run: npm run build
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Configure gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure Docker to use Artifact Registry
-        run: gcloud auth configure-docker $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev
-
-      - name: Build API Docker image
-        run: |
-          docker build -f api/Dockerfile -t $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA .
-
-      - name: Push API Docker image
-        run: |
-          docker push $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA
-
-      - name: Deploy API to Cloud Run
-        run: |
-          gcloud run deploy $API_SERVICE_NAME \
-            --image $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA \
-            --platform managed \
-            --region $REGION \
-            --allow-unauthenticated \
-            --port 8080 \
-            --memory 512Mi \
-            --cpu 1 \
-            --min-instances 0 \
-            --max-instances 5 \
-            --timeout 300 \
-            --concurrency 1000 \
-            --set-env-vars "NODE_ENV=production,FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }},FIREBASE_CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }},FIREBASE_PRIVATE_KEY=${{ secrets.FIREBASE_PRIVATE_KEY }}" \
-            --project $PROJECT_ID
-
   deploy:
-    needs: deploy-api
     runs-on: ubuntu-latest
     
     steps:
@@ -89,6 +31,12 @@ jobs:
 
       - name: Generate Static JSON files
         run: npm run generate-json
+
+      - name: Run type check
+        run: npm run type-check
+
+      - name: Run lint
+        run: npm run lint
 
       - name: Build application
         run: npm run build

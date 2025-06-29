@@ -13,7 +13,7 @@ const nextConfig = {
     missingSuspenseWithCSRBailout: false,
   },
   
-  // Functions ディレクトリを除外
+  // Server-side fs fallback configuration
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {

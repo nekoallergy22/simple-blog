@@ -19,7 +19,7 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build the application
+# Build the application (includes JSON generation)
 RUN npm run build
 
 # Production image, copy all the files and run next
