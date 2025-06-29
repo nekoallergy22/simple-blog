@@ -7,8 +7,8 @@ WORKDIR /app
 # package.json と package-lock.json をコピー
 COPY api/package*.json ./
 
-# 依存関係をインストール
-RUN npm ci --only=production
+# 依存関係をインストール（dev dependencies含む）
+RUN npm ci
 
 # APIソースコードをコピー
 COPY api/src ./src
@@ -29,10 +29,12 @@ RUN adduser --system --uid 1001 nextjs
 
 WORKDIR /app
 
-# 本番用依存関係のみをコピー
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
+# package.json をコピーして本番用依存関係をインストール
 COPY --from=builder /app/package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# ビルド成果物をコピー
+COPY --from=builder /app/dist ./dist
 
 # postsディレクトリをコピー（Markdownファイル用）
 COPY posts ./posts
