@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/api/node_modules
+/api/dist
 /.pnp
 .pnp.js
 
@@ -39,9 +41,13 @@ next-env.d.ts
 service-account-key.json
 firebase-debug.log
 
-# Functions dependencies
+# Functions dependencies (legacy)
 functions/node_modules/
 functions/lib/
+
+# API dependencies
+api/node_modules/
+api/dist/
 
 # Deployment files
 pglite-debug.log
