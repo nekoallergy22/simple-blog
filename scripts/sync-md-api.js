@@ -6,12 +6,19 @@ require('dotenv').config({ path: '.env.local' });
 
 // API URL の決定
 function getApiUrl() {
+  console.log('🔍 Environment check:');
+  console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`  API_URL: ${process.env.API_URL}`);
+  
   // 本番環境での API URL (Cloud Run)
   if (process.env.NODE_ENV === 'production' || process.env.API_URL) {
-    return process.env.API_URL || `https://tech-master-api-[hash]-an.a.run.app`;
+    const apiUrl = process.env.API_URL || `https://tech-master-api-[hash]-an.a.run.app`;
+    console.log(`🌐 Using production API URL: ${apiUrl}`);
+    return apiUrl;
   }
   
   // ローカル開発環境
+  console.log('🏠 Using local development URL');
   return 'http://localhost:8080';
 }
 

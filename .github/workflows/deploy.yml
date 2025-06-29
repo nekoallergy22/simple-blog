@@ -97,13 +97,18 @@ jobs:
       - name: Get API URL
         id: get-api-url
         run: |
+          echo "🔍 Getting API URL for service: $API_SERVICE_NAME"
           API_URL=$(gcloud run services describe $API_SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "🌐 API URL: $API_URL"
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
       - name: Sync markdown files via API
         env:
           API_URL: ${{ steps.get-api-url.outputs.api_url }}
           NODE_ENV: production
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
         run: npm run sync-md
 
   deploy:
