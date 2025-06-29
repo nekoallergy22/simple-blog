@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### システム構成
 - **フロントエンド**: Next.js 14.2.5 (App Router) + TypeScript + Tailwind CSS
-- **バックエンド**: Firebase (Firestore, Functions, Storage)
+- **バックエンド**: Firebase (Firestore, Storage) + Cloud Run API
 - **ホスティング**: Google Cloud Run (コンテナ化)
 - **デプロイ**: GitHub Actions CI/CD
 - **記事管理**: セクション別ローカルMarkdownファイル → Firestore同期
@@ -54,8 +54,11 @@ npm run type-check
 # ESLint実行
 npm run lint
 
-# Markdownファイル→Firestore同期
+# Markdownファイル→Firestore同期 (Cloud Run API経由)
 npm run sync-md
+
+# レガシー同期 (直接Firebase Admin使用)
+npm run sync-md-legacy
 ```
 
 ### テスト・検証
@@ -76,6 +79,9 @@ npm run sync-md
 
 # Cloud Run手動デプロイ
 ./scripts/deploy-cloudrun.sh
+
+# API サービス単体デプロイ
+./scripts/deploy-api.sh
 ```
 
 ### セットアップ・初期設定
@@ -171,7 +177,10 @@ Markdownで記事本文を記述
 ### Next.js設定
 - **出力形式**: standalone（Dockerコンテナ用）
 - **ポート**: 開発3000、本番8080
-- **画像**: domains未設定（必要に応じて追加）
+- **画像**: WebP/AVIF最適化有効、TTL 60秒
+- **セキュリティヘッダー**: X-Frame-Options, CSP, XSS保護設定
+- **Font最適化**: 無効化（GitHub Actions対応）
+- **Webpack**: サーバーサイドでfs fallback設定
 
 ### Docker・Cloud Run
 - **Base Image**: Node.js 18 Alpine
@@ -185,8 +194,10 @@ Markdownで記事本文を記述
 1. **Firebase接続エラー**: 環境変数確認、Markdownフォールバック確認
 2. **ビルドエラー**: `npm run type-check`で型エラー確認
 3. **デプロイエラー**: GitHub Actions logs確認、Artifact Registry権限確認
-4. **記事表示されない**: `npm run sync-md`実行
+4. **記事表示されない**: `npm run sync-md`実行、Firestore接続確認
 5. **Docker push失敗**: `./scripts/fix-service-account-permissions.sh`実行
+6. **型エラー**: Post interface変更時はsrc/types/index.ts更新必要
+7. **セクション表示問題**: section fieldがai以外でも正しく設定されているか確認
 
 ### デバッグコマンド
 ```bash
@@ -204,7 +215,26 @@ npm run build  # ビルドエラー確認
 ./scripts/setup-artifact-registry.sh
 ```
 
-## 現在の状況（2025-06-28）
+## 重要な実装パターン
+
+### データ取得の優先順位
+1. **Firebase Firestore**: 本番環境での優先データソース
+2. **Markdown Fallback**: Firebase接続失敗時の自動フォールバック
+3. **Error Handling**: try-catch ブロックで適切なエラーログ出力
+
+### 記事データの流れ
+```
+Markdown Files → sync-md.js → Firestore → Posts API → Component Rendering
+     ↓ (fallback)                                       ↑
+Local Markdown ←──────────────────────────────────────┘
+```
+
+### セクション管理
+- **Section Type**: ai, python, datascience, tensorflow
+- **Legacy Category**: ai-course → ai section自動マッピング
+- **Sorting**: number field優先、次にdate降順
+
+## 現在の状況（2025-06-29）
 
 ### 実装完了
 - ✅ Next.js 14 + App Router完全設定（セクション別ルーティング）
@@ -219,6 +249,35 @@ npm run build  # ビルドエラー確認
 - ✅ 自動化スクリプト一式
 
 ### Git状況
-- **ブランチ**: main（クリーン）
+- **ブランチ**: main（アクティブ開発）
 - **デプロイ**: GitHub Actions自動実行
 - **最新変更**: Simple Blog → Tech-Master変更、セクション別ルーティング実装
+
+## 環境変数の設定
+
+### 必須環境変数（.env.local）
+```bash
+# Firebase Web Configuration (Public)
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+
+# Firebase Admin Configuration (Private)  
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=service-account-email
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
+# Project Configuration
+GCP_PROJECT_ID=your-project-id
+GITHUB_REPO=username/repository-name
+CUSTOM_DOMAIN=yourdomain.com
+SERVICE_NAME=tech-master
+```
+
+### 環境変数の確認
+```bash
+# Firebase接続状況確認
+npm run dev  # コンソールでFirebase初期化ログ確認
+
+# 環境変数が正しく読み込まれているか確認
+echo $NEXT_PUBLIC_FIREBASE_PROJECT_ID
+```

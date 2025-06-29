@@ -8,12 +8,71 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
+  API_SERVICE_NAME: tech-master-api
   REGION: asia-northeast1
   ARTIFACT_REGISTRY_LOCATION: asia-northeast1
   REPOSITORY: simple-blog-repo
 
 jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install API dependencies
+        working-directory: ./api
+        run: npm ci
+
+      - name: Build API
+        working-directory: ./api
+        run: npm run build
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker to use Artifact Registry
+        run: gcloud auth configure-docker $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev
+
+      - name: Build API Docker image
+        working-directory: ./api
+        run: |
+          docker build -t $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA .
+
+      - name: Push API Docker image
+        run: |
+          docker push $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA
+
+      - name: Deploy API to Cloud Run
+        run: |
+          gcloud run deploy $API_SERVICE_NAME \
+            --image $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA \
+            --platform managed \
+            --region $REGION \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 5 \
+            --timeout 300 \
+            --concurrency 1000 \
+            --set-env-vars "NODE_ENV=production,FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }},FIREBASE_CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }},FIREBASE_PRIVATE_KEY=${{ secrets.FIREBASE_PRIVATE_KEY }}" \
+            --project $PROJECT_ID
+
   sync-markdown:
+    needs: deploy-api
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,11 +87,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Sync markdown files to Firebase
+      - name: Authenticate to Google Cloud for sync
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure gcloud CLI for sync
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Get API URL
+        id: get-api-url
+        run: |
+          API_URL=$(gcloud run services describe $API_SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+
+      - name: Sync markdown files via API
         env:
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          API_URL: ${{ steps.get-api-url.outputs.api_url }}
+          NODE_ENV: production
         run: npm run sync-md
 
   deploy:

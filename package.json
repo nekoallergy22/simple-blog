@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "sync-md": "node scripts/sync-md.js"
+    "sync-md": "node scripts/sync-md-api.js",
+    "sync-md-legacy": "node scripts/sync-md.js"
   },
   "dependencies": {
     "@tailwindcss/typography": "0.5.13",
