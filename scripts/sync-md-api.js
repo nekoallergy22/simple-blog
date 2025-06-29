@@ -28,9 +28,10 @@ function makeRequest(url, options = {}) {
     const client = url.startsWith('https') ? https : http;
     
     const req = client.request(url, {
-      method: 'POST',
+      method: options.method || 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': 'Tech-Master-Sync-Script/1.0',
         ...options.headers
       },
       timeout: 30000, // 30秒タイムアウト
@@ -79,7 +80,7 @@ async function syncMarkdown() {
   try {
     // まずヘルスチェック
     console.log('💓 API ヘルスチェック...');
-    const healthResponse = await makeRequest(`${apiUrl}/health`);
+    const healthResponse = await makeRequest(`${apiUrl}/health`, { method: 'GET' });
     
     if (healthResponse.status === 200) {
       console.log('✅ API サービス稼働中');
