@@ -1,482 +1,376 @@
-# Simple Blog デプロイガイド
+# Tech-Master デプロイメントガイド
 
-## 📖 概要
-Next.js + Firebase + Cloud Run を使用したシンプルブログアプリの**完全自動デプロイ**システムです。
-**git push だけ**で本番環境へのデプロイが自動実行されます。
+このガイドでは、Tech-Master（技術学習プラットフォーム）のセットアップからデプロイまでの全手順を説明します。
 
-**🎯 現在の状況**: 自動デプロイシステム構築完了、GitHub Actions稼働中
+## 📋 目次
 
-## ✨ 特徴
-- 🚀 **GitHub Actions による完全自動デプロイ**
-- 📝 **Markdown ファイルから記事自動同期**
-- 🔥 **Firebase Firestore でデータ管理**
-- ☁️ **Cloud Run で本番ホスティング**
-- 🛠️ **CLI スクリプトで設定自動化**
+1. [スクリプト一覧と目的](#スクリプト一覧と目的)
+2. [初期セットアップ](#初期セットアップ)
+3. [開発環境での作業](#開発環境での作業)
+4. [プロダクション環境へのデプロイ](#プロダクション環境へのデプロイ)
+5. [独自ドメインの設定](#独自ドメインの設定)
+6. [トラブルシューティング](#トラブルシューティング)
 
-## 📋 前提条件
-- macOS環境（Homebrew利用）
-- Google Cloud アカウント
-- GitHub アカウント
-- 基本的なターミナル操作の知識
+## 📜 スクリプト一覧と目的
 
-## 🎯 最新状況（2025-06-27）
-- ✅ **環境**: Node.js 20.19.3, Firebase CLI 14.9.0 対応完了
-- ✅ **CI/CD**: GitHub Actions ワークフロー構築完了
-- ✅ **設定**: 12個のGitHub Secrets設定完了 
-- ✅ **コンテンツ**: 24記事のAI学習コース収録済み
-- ✅ **自動化**: `.env.local` からのSecrets一括設定対応
-- ✅ **セキュリティ**: `.gitignore` で機密情報保護設定済み
-- 🚀 **現在**: 自動デプロイシステム稼働中
+### 🚀 メインスクリプト（主要操作）
 
-### 🔄 自動デプロイフロー
-```
-記事更新・コード変更 → git push → GitHub Actions → Cloud Run デプロイ
-```
+| スクリプト | 目的 | いつ使う | 効果 |
+|------------|------|----------|------|
+| `deploy-github.sh` | **GitHub Actions経由デプロイ**（推奨） | 日常的なデプロイ | Markdown同期→コミット→プッシュ→自動デプロイ |
+| `deploy-cloudbuild.sh` | **Cloud Build直接デプロイ** | GitHub Actions使わずデプロイしたい時 | Cloud Build→Artifact Registry→Cloud Run |
+| `domain-setup.sh` | **独自ドメイン設定** | カスタムドメインを設定したい時 | DNS設定→SSL証明書→Load Balancer設定 |
 
-## 1. 環境準備
+### ⚙️ セットアップスクリプト（初回のみ）
 
-### 1.1 Node.js アップグレード（Node.js 20が必要）
+| スクリプト | 目的 | いつ使う | 効果 |
+|------------|------|----------|------|
+| `setup-firebase-existing.sh` | **Firebase初期設定** | プロジェクト開始時 | Firebase API有効化→Firestore設定 |
+| `setup-github-complete.sh` | **GitHub Actions設定** | CI/CD構築時 | GitHub Secrets設定→権限設定 |
+| `setup-secrets-from-env.sh` | **Secrets一括設定** | 環境変数をSecretsに反映したい時 | .env.local→GitHub Secretsに一括転送 |
 
-```bash
-# Homebrew で Node.js 20 をインストール
-brew install node@20
+### 🔧 補助スクリプト（必要に応じて）
 
-# PATH を更新
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
+| スクリプト | 目的 | いつ使う | 効果 |
+|------------|------|----------|------|
+| `check-deployment-status.sh` | **デプロイ状況確認** | デプロイ後の状態確認 | Cloud Run状態→ログ→イメージ情報表示 |
+| `test-sync.sh` | **Markdown同期テスト** | 同期機能のテスト | ローカル→Firebase同期テスト |
+| `setup-artifact-registry.sh` | **Artifact Registry設定** | Dockerリポジトリ設定 | Docker用リポジトリ作成 |
+| `setup-firebase-files.sh` | **Firebase設定ファイル生成** | Firebase設定ファイル必要時 | firebase.json等の生成 |
+| `firebase-web-config.sh` | **Firebase Web設定取得** | Web SDK設定情報取得 | Firebase Web設定の表示 |
+| `fix-service-account-permissions.sh` | **権限修正** | 権限エラー発生時 | サービスアカウント権限修正 |
 
-# バージョン確認
-node --version  # v20.19.3 であることを確認
-```
+### 📄 その他ファイル
 
-### 1.2 Firebase CLI インストール
+| ファイル | 目的 |
+|----------|------|
+| `sync-md.js` | Markdownファイル→Firestore同期のメインロジック |
 
-```bash
-# プロジェクト内にローカルインストール
-npm install firebase-tools
+## 🚀 初期セットアップ
 
-# バージョン確認
-npx firebase --version  # 14.9.0 であることを確認
-```
+### 前提条件
 
-## 2. GCP プロジェクト設定
+- Node.js 18+ がインストールされていること
+- Google Cloud CLI がインストールされていること
+- Firebase CLI がインストールされていること
+- GitHub CLI がインストールされていること（オプション）
 
-### 2.1 GCP 初期設定
+### 1. プロジェクトクローンと依存関係インストール
 
 ```bash
-# GCP 設定スクリプト実行（.env.localから自動読み取り）
-./scripts/setup-gcp.sh
-
-# または明示的にプロジェクトID指定
-./scripts/setup-gcp.sh YOUR_PROJECT_ID
+git clone https://github.com/nekoallergy22/simple-blog.git
+cd simple-blog
+npm install
 ```
 
-このスクリプトが実行する内容：
-- Google Cloud ログイン
-- プロジェクト設定
-- 必要なAPI有効化（Cloud Run, Cloud Build, Artifact Registry等）
-- サービスアカウント作成
-- 基本権限設定
-- サービスアカウントキー作成（`service-account-key.json`）
+### 2. 環境変数の設定
 
-### 2.2 Artifact Registry対応（重要）
-
-Container Registryが非推奨になったため、Artifact Registryを設定：
+`.env.local`ファイルを作成し、以下の内容を設定：
 
 ```bash
-# サービスアカウント権限修正
-./scripts/fix-service-account-permissions.sh
+# Firebase設定
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef123456
 
-# Artifact Registry設定
-./scripts/setup-artifact-registry.sh
+# Firebase Admin設定
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_CLIENT_EMAIL=service-account@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
+# プロジェクト設定
+GCP_PROJECT_ID=your_project_id
+GITHUB_REPO=your_username/simple-blog
+SERVICE_NAME=tech-master
+CUSTOM_DOMAIN=techmaster.dev
 ```
 
-### 2.3 Firebase 設定
+### 3. Firebase プロジェクトの設定
+
+既存のGCPプロジェクトをFirebaseプロジェクトとして設定：
 
 ```bash
-# Firebase API 有効化（.env.localから自動読み取り）
 ./scripts/setup-firebase-existing.sh
 ```
 
-**手動操作が必要**：
-1. [Firebase Console](https://console.firebase.google.com/) にアクセス
-2. 「プロジェクトを追加」→「既存のGoogle Cloudプロジェクトを選択」
-3. 作成したプロジェクトIDを選択
-4. Firebase を追加
+**効果**: 
+- Firestore API有効化
+- Firebase Authentication有効化
+- Firestore セキュリティルール設定
+- 必要なサービスアカウント作成
 
-### 2.4 Firebase 設定ファイル作成
+### 4. GitHub Actions の設定
+
+GitHubリポジトリにCI/CDを設定：
 
 ```bash
-# Firebase 設定ファイル作成（.env.localから自動読み取り）
-./scripts/setup-firebase-files.sh
-
-# Firebase プロジェクト設定
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
-npx firebase use $(grep GCP_PROJECT_ID .env.local | cut -d'=' -f2)
+./scripts/setup-github-complete.sh
 ```
 
-## 3. Firebase Functions デプロイ
+**効果**: 
+- GitHub Secretsが自動設定される
+- サービスアカウントキーがSecretsに登録される
+- mainブランチへのpush時に自動デプロイが実行される
+- 必要なGCP権限が設定される
 
-### 3.1 Functions デプロイ
+## 💻 開発環境での作業
 
-```bash
-# Firebase Functions デプロイ
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
-./scripts/deploy-functions.sh
-```
-
-このスクリプトが実行する内容：
-- Functions ソースコード作成（TypeScript）
-- 依存関係インストール
-- TypeScript コンパイル
-- Firebase Functions デプロイ
-- Firestore ルールとインデックス デプロイ
-
-**注意**：Firestore インデックスでエラーが出た場合、不要なインデックスを削除します：
+### ローカル開発サーバーの起動
 
 ```bash
-# firestore.indexes.json を編集（単一フィールドインデックスを削除）
-# 再デプロイ
-npx firebase deploy --only firestore:rules,firestore:indexes
-```
-
-### 3.2 作成される Functions
-
-デプロイ完了後、以下の関数が作成されます：
-- `syncMarkdownFiles`: Markdown ファイルを Firestore に同期
-- `healthCheck`: ヘルスチェック用
-
-Functions URL例：
-- https://asia-northeast1-YOUR_PROJECT_ID.cloudfunctions.net/syncMarkdownFiles
-- https://asia-northeast1-YOUR_PROJECT_ID.cloudfunctions.net/healthCheck
-
-## 4. 初回データ同期
-
-### 4.1 環境変数設定とMarkdown同期
-
-```bash
-# 環境変数設定（サービスアカウント情報）
-export FIREBASE_PROJECT_ID="YOUR_PROJECT_ID"
-export FIREBASE_CLIENT_EMAIL=$(cat service-account-key.json | grep -o '"client_email": "[^"]*"' | cut -d'"' -f4)
-export FIREBASE_PRIVATE_KEY=$(cat service-account-key.json | grep -o '"private_key": "[^"]*"' | cut -d'"' -f4)
-
-# Markdown ファイル同期実行
-npm run sync-md
-```
-
-成功すると、posts/ ディレクトリ内の全 Markdown ファイルが Firestore の posts コレクションに同期されます。
-
-### 4.2 同期結果確認
-
-```bash
-# Firebase Console でデータ確認
-echo "Firebase Console: https://console.firebase.google.com/project/YOUR_PROJECT_ID/firestore"
-```
-
-## 5. GitHub Secrets 設定（CI/CD用）
-
-### 5.1 GitHub Secrets 自動設定
-
-```bash
-# GitHub Secrets 設定スクリプト実行
-./scripts/github-secrets-setup.sh YOUR_PROJECT_ID YOUR_GITHUB_USERNAME/REPO_NAME
-
-# 例：
-./scripts/github-secrets-setup.sh pid-my-portfolio-project username/simple-blog
-```
-
-### 5.2 手動で追加が必要なSecrets
-
-Firebase Console からウェブアプリ設定を取得して、以下を手動で追加：
-
-```bash
-gh secret set NEXT_PUBLIC_FIREBASE_API_KEY --body 'YOUR_API_KEY' --repo 'YOUR_REPO'
-gh secret set NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN --body 'YOUR_PROJECT_ID.firebaseapp.com' --repo 'YOUR_REPO'
-gh secret set NEXT_PUBLIC_FIREBASE_PROJECT_ID --body 'YOUR_PROJECT_ID' --repo 'YOUR_REPO'
-gh secret set NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET --body 'YOUR_PROJECT_ID.appspot.com' --repo 'YOUR_REPO'
-gh secret set NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID --body 'YOUR_SENDER_ID' --repo 'YOUR_REPO'
-gh secret set NEXT_PUBLIC_FIREBASE_APP_ID --body 'YOUR_APP_ID' --repo 'YOUR_REPO'
-```
-
-## 6. 🚀 GitHub Actions 完全自動デプロイ設定
-
-### 6.1 一括環境設定（推奨）
-
-**ステップ1: Firebase Console でWeb アプリ作成**
-1. [Firebase Console](https://console.firebase.google.com/project/YOUR_PROJECT_ID/settings/general) を開く
-2. 「ウェブアプリを追加」をクリック  
-3. アプリ名: `simple-blog-web` で作成
-4. 設定情報をコピー
-
-**ステップ2: 環境変数ファイル作成**
-取得した Firebase 設定で `.env.local` を編集：
-
-```bash
-# Firebase Web App Configuration（サンプル値）
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyB5ewQvp43KLLNfYMmlwLP...（Firebase Consoleから取得）
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456789
-
-# プロジェクト設定
-GCP_PROJECT_ID=your-project-id
-GITHUB_REPO=your-username/simple-blog
-```
-
-**ステップ3: GitHub Secrets 自動設定**
-```bash
-# 全てのSecrets を一括設定
-./scripts/setup-secrets-from-env.sh
-```
-
-### 6.2 自動デプロイ実行
-
-```bash
-# コード変更後、自動デプロイ実行
-./scripts/deploy-github.sh "新機能追加"
-
-# または手動で
-git add .
-git commit -m "Deploy: $(date)"
-git push origin main
-```
-
-### 6.4 GitHub Actions ワークフロー
-
-main ブランチに push すると自動実行される処理：
-
-1. **sync-markdown** job:
-   - Node.js 20 セットアップ
-   - 依存関係インストール
-   - Markdown ファイルを Firestore に同期
-
-2. **deploy** job:
-   - Node.js 20 セットアップ
-   - Next.js アプリケーションビルド
-   - Docker イメージ作成・プッシュ
-   - Cloud Run デプロイ
-
-### 6.5 デプロイ状況確認
-
-```bash
-# GitHub Actions ログ確認
-open "https://github.com/YOUR_USERNAME/REPO_NAME/actions"
-
-# Cloud Run サービス確認
-gcloud run services list --project=YOUR_PROJECT_ID
-```
-
-## 7. 手動 Cloud Run デプロイ（オプション）
-
-### 7.1 手動デプロイ
-
-```bash
-# Cloud Run デプロイ
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
-./scripts/deploy-cloudrun.sh YOUR_PROJECT_ID
-```
-
-## 7. 動作確認
-
-### 7.1 Functions 動作確認
-
-```bash
-# 同期テストスクリプト実行
-./scripts/test-sync.sh
-```
-
-### 7.2 ローカル開発サーバー
-
-```bash
-# 環境変数設定後、開発サーバー起動
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
 npm run dev
 ```
 
-http://localhost:3000 でアプリケーションが確認できます。
+アプリケーションは `http://localhost:3000` で利用可能になります。
 
-### 7.3 本番サイト確認
+### Markdownファイルの同期
 
-Cloud Run デプロイ完了後、表示されるURLでアプリケーションが確認できます。
-
-## 8. トラブルシューティング
-
-### 8.1 Firebase CLI 認証エラー
+記事（Markdownファイル）をFirestoreに同期：
 
 ```bash
-# Firebase 再ログイン（対話モード必要）
-npx firebase logout
-npx firebase login
-
-# プロジェクト一覧確認
-npx firebase projects:list
+npm run sync-md
 ```
 
-### 8.2 Node.js バージョン問題
+**効果**: `posts/` ディレクトリ内のMarkdownファイルがFirestoreの`posts`コレクションに同期されます。
+
+### 同期機能のテスト
 
 ```bash
-# 現在のバージョン確認
-node --version
-
-# PATH 確認・更新
-export PATH="/usr/local/Cellar/node@20/20.19.3/bin:$PATH"
+./scripts/test-sync.sh
 ```
 
-### 8.3 Firebase Functions タイムアウト
+**効果**: 
+- Markdownファイルの存在確認
+- ローカル同期の実行
+- Firebase Functions経由での同期テスト（該当する場合）
+- Firestoreデータの確認
 
-Functions の処理が重い場合、タイムアウト設定を調整：
+## 🌐 プロダクション環境へのデプロイ
 
-```typescript
-// functions/src/index.ts
-export const syncMarkdownFiles = functions
-  .region('asia-northeast1')
-  .runWith({ timeoutSeconds: 540 }) // 9分に延長
-  .https.onRequest(async (req, res) => {
-    // ...
-  });
-```
+### 方法1: GitHub Actions経由（推奨）
 
-## 9. プロジェクト構成
-
-```
-simple-blog/
-├── .github/workflows/
-│   └── deploy.yml                 # GitHub Actions ワークフロー
-├── scripts/
-│   ├── setup-gcp.sh              # GCP 初期設定
-│   ├── setup-firebase-existing.sh # Firebase API 有効化
-│   ├── setup-firebase-files.sh   # Firebase 設定ファイル作成
-│   ├── deploy-functions.sh       # Functions デプロイ
-│   ├── deploy-cloudrun.sh        # Cloud Run デプロイ
-│   ├── test-sync.sh             # 同期テスト
-│   ├── github-secrets-setup.sh  # GitHub Secrets 設定
-│   └── sync-md.js               # Markdown 同期スクリプト
-├── functions/                    # Firebase Functions
-├── posts/                       # Markdown 記事ファイル（24記事）
-├── src/                         # Next.js アプリケーション
-├── firebase.json               # Firebase 設定
-├── firestore.rules            # Firestore セキュリティルール
-├── firestore.indexes.json     # Firestore インデックス
-├── .firebaserc               # Firebase プロジェクト設定
-├── Dockerfile               # Cloud Run 用 Docker 設定
-└── service-account-key.json # GCP サービスアカウントキー（秘匿）
-```
-
-## 10. 重要なファイル
-
-### 10.1 環境変数（.env.example）
-
-```env
-# Firebase 設定
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=service-account@your-project-id.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----
-
-# Next.js Firebase 設定
-NEXT_PUBLIC_FIREBASE_API_KEY=AIza...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef123456
-```
-
-### 10.2 記事フォーマット（posts/*.md）
-
-```markdown
----
-title: "記事タイトル"
-date: "2024-01-01"
-category: "ai-course"
-slug: "article-slug"
----
-
-# 記事内容
-Markdown で記述された本文内容
-```
-
-## 11. セキュリティ注意事項
-
-- `service-account-key.json` は絶対に Git にコミットしない
-- `.gitignore` に `service-account-key.json` が含まれていることを確認
-- GitHub Secrets は慎重に管理する
-- Firestore セキュリティルールで適切なアクセス制御を設定
-
-## 12. 参考リンク
-
-- [Firebase Console](https://console.firebase.google.com/)
-- [Google Cloud Console](https://console.cloud.google.com/)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Cloud Run Documentation](https://cloud.google.com/run/docs)
-
----
-
-## 13. 🚀 クイックスタート（要約）
-
-**新規セットアップの場合：**
 ```bash
-# 1. 基本環境構築（.env.localから自動読み取り）
-./scripts/setup-gcp.sh
-./scripts/fix-service-account-permissions.sh
+./scripts/deploy-github.sh "コミットメッセージ"
+```
+
+**効果**:
+- Markdownファイルの自動同期
+- 変更のコミット・プッシュ
+- GitHub Actionsによる自動ビルド・デプロイ
+- Cloud Runへのデプロイ
+
+**使用場面**: 
+- 日常的な記事更新
+- コード変更のデプロイ
+- 複数人での開発
+
+### 方法2: 直接デプロイ
+
+```bash
+./scripts/deploy-cloudbuild.sh
+```
+
+**効果**:
+- Cloud Build経由でのDockerイメージビルド
+- Artifact Registryへのプッシュ
+- Cloud Runへの直接デプロイ
+
+**使用場面**:
+- GitHub Actionsを使わずにデプロイしたい場合
+- ローカルからの直接デプロイ
+- CI/CD設定前のテストデプロイ
+
+### デプロイ状況の確認
+
+```bash
+./scripts/check-deployment-status.sh
+```
+
+**効果**:
+- Cloud Runサービスの状態確認
+- 最近のCloud Buildの状況
+- コンテナイメージの確認
+- エラーログの表示
+- 推奨コマンドの提示
+
+## 🌍 独自ドメインの設定
+
+### カスタムドメインの設定
+
+```bash
+./scripts/domain-setup.sh
+```
+
+**効果**:
+- Cloud DNS マネージドゾーンの作成
+- 静的IPアドレスの割り当て
+- SSL証明書の作成（Google Managed）
+- Load Balancerの設定（NEG、バックエンドサービス、URLマップ）
+- HTTPSプロキシの作成
+- HTTP→HTTPSリダイレクトの設定
+- 設定状態の最終確認
+
+**使用場面**:
+- 初回のドメイン設定
+- ドメイン設定のトラブル解決
+- SSL証明書の更新
+
+### 手動設定が必要な作業
+
+1. **ドメインレジストラでのネームサーバー設定**
+   - スクリプト実行後に表示されるGoogle Cloud DNSのネームサーバーを設定
+
+2. **Firebase Authenticationの設定**
+   - Firebase Consoleで独自ドメインを承認済みドメインに追加
+
+## 🔧 補助スクリプト詳細
+
+### 環境設定関連
+
+#### Artifact Registry の設定
+```bash
 ./scripts/setup-artifact-registry.sh
+```
+**効果**: Dockerイメージ用のArtifact Registryリポジトリを作成
+**使用場面**: Container Registry廃止に伴う移行、初回セットアップ
+
+#### Firebase設定ファイルの生成
+```bash
 ./scripts/setup-firebase-files.sh
+```
+**効果**: Firebase設定ファイル（`firebase.json`、`.firebaserc`）を生成
+**使用場面**: Firebase設定が必要な場合、設定ファイル紛失時
 
-# 2. Firebase Console でWebアプリ作成
-# → .env.local ファイル編集
+#### Firebase Web設定の取得
+```bash
+./scripts/firebase-web-config.sh
+```
+**効果**: Firebase Web SDKの設定情報を取得・表示
+**使用場面**: フロントエンド設定情報が必要な場合
 
-# 3. GitHub Secrets 一括設定
+### デプロイ関連
+
+#### GitHub Secretsの設定
+```bash
 ./scripts/setup-secrets-from-env.sh
-
-# 4. 自動デプロイ開始
-./scripts/deploy-github.sh "Initial deployment"
 ```
+**効果**: `.env.local`の内容を基にGitHub Secretsを一括設定
+**使用場面**: 環境変数の更新時、Secrets設定の一括更新
 
-**日常的な更新作業：**
+#### サービスアカウント権限の修正
 ```bash
-# 記事追加・コード変更後（推奨）
-./scripts/deploy-github.sh "新機能追加"
-
-# または手動で
-git add . && git commit -m "更新" && git push origin main
+./scripts/fix-service-account-permissions.sh
 ```
+**効果**: デプロイに必要なサービスアカウントの権限を適切に設定
+**使用場面**: 権限エラー発生時、初回セットアップ時
 
-### 🔍 デプロイ監視
+### 監視・テスト関連
+
+#### デプロイ状況確認
 ```bash
-# デプロイ状況確認
-echo "GitHub Actions: https://github.com/nekoallergy22/simple-blog/actions"
-echo "Cloud Run: https://console.cloud.google.com/run?project=pid-my-portfolio-project"
+./scripts/check-deployment-status.sh
+```
+**効果**: 包括的なデプロイ状況レポート
+**使用場面**: デプロイ後の状態確認、トラブルシューティング
 
-# ローカル確認
-npm run dev  # http://localhost:3000
+#### Markdown同期テスト
+```bash
+./scripts/test-sync.sh
+```
+**効果**: 同期機能の詳細テスト
+**使用場面**: 記事が表示されない場合、同期機能のデバッグ
+
+## 🔍 トラブルシューティング
+
+### よくある問題と解決法
+
+#### 1. Firebase接続エラー
+```bash
+# 環境変数の確認
+cat .env.local | grep FIREBASE
+
+# Firebase プロジェクトの再設定
+./scripts/setup-firebase-existing.sh
 ```
 
----
+#### 2. デプロイエラー
+```bash
+# デプロイ状況の確認
+./scripts/check-deployment-status.sh
 
-**📊 プロジェクト実績**
-- ✅ **環境**: Node.js 20.19.3, Firebase CLI 14.9.0
-- ✅ **記事数**: 24記事（AI学習コース）
-- ✅ **デプロイ**: GitHub Actions完全自動化
-- ✅ **インフラ**: Firebase + Cloud Run
-- ✅ **セキュリティ**: GitHub Secrets管理
+# サービスアカウント権限の修正
+./scripts/fix-service-account-permissions.sh
+```
 
-**最終更新**: 2025-06-27  
-**デプロイ状況**: [GitHub Actions](https://github.com/nekoallergy22/simple-blog/actions) | [Cloud Run](https://console.cloud.google.com/run?project=pid-my-portfolio-project)
+#### 3. ドメイン設定エラー
+```bash
+# 既存のリソース確認
+gcloud compute addresses list --global
+gcloud dns managed-zones list
 
----
+# ドメイン設定の再実行（冪等性あり）
+./scripts/domain-setup.sh
+```
 
-## 🎉 完了したシステム概要
+#### 4. Markdown同期エラー
+```bash
+# 同期テスト実行
+./scripts/test-sync.sh
 
-### 🔧 技術スタック
-- **フロントエンド**: Next.js 14 + TypeScript + Tailwind CSS
-- **バックエンド**: Firebase (Firestore + Functions)
-- **ホスティング**: Google Cloud Run
-- **CI/CD**: GitHub Actions
-- **運用**: Node.js 20.19.3 + Firebase CLI 14.9.0
+# 手動同期
+npm run sync-md
+```
 
-### 📊 プロジェクト実績
-- ✅ **記事管理**: Markdown → Firestore 自動同期
-- ✅ **デプロイ**: CLI スクリプトによる完全自動化
-- ✅ **セキュリティ**: GitHub Secrets による安全な認証情報管理
-- ✅ **スケーラビリティ**: Cloud Run によるサーバーレス運用
-- ✅ **開発体験**: git push のみでの本番反映
+#### 5. GitHub Actions失敗
+```bash
+# Secrets確認
+gh secret list
+
+# Secrets再設定
+./scripts/setup-secrets-from-env.sh
+```
+
+### ログの確認方法
+
+```bash
+# Cloud Runログ
+source .env.local && gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE_NAME" --limit=50
+
+# Cloud Buildログ
+gcloud builds list --limit=5
+
+# GitHub Actionsログ
+# https://github.com/your-username/simple-blog/actions
+```
+
+## 📊 運用フロー
+
+### 日常的な記事更新
+1. `posts/` ディレクトリに記事追加
+2. `./scripts/deploy-github.sh "新記事追加"`
+3. GitHub Actionsで自動デプロイ
+4. 数分後に本番サイトに反映
+
+### コード変更デプロイ
+1. コード変更・テスト
+2. `./scripts/deploy-github.sh "機能追加"`
+3. GitHub Actions経由で自動デプロイ
+
+### 設定変更
+1. `.env.local` 更新
+2. `./scripts/setup-secrets-from-env.sh` でSecrets更新
+3. 必要に応じて `./scripts/deploy-github.sh "設定更新"`
+
+## 📞 サポート
+
+問題が解決しない場合は、以下を確認してください：
+
+1. `.env.local`の設定が正しいか
+2. 必要なAPIが有効化されているか
+3. サービスアカウントの権限が適切か
+4. GitHub Secretsが正しく設定されているか
+
+詳細なエラーログと共に、プロジェクトの管理者に相談してください。

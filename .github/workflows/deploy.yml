@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  SERVICE_NAME: simple-blog
+  SERVICE_NAME: ${{ secrets.SERVICE_NAME }}
   REGION: asia-northeast1
   ARTIFACT_REGISTRY_LOCATION: asia-northeast1
   REPOSITORY: simple-blog-repo

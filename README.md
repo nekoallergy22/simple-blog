@@ -1,14 +1,16 @@
-# 🚀 Simple Blog
+# 🎓 Tech-Master
 
-**GitHub Actions 完全自動デプロイ対応** - AIコース記事24本収録のシンプルブログアプリケーション
+**技術学習プラットフォーム** - AI学習コース記事収録のNext.jsアプリケーション
 
 [![Deploy Status](https://github.com/nekoallergy22/simple-blog/workflows/Deploy%20to%20Cloud%20Run/badge.svg)](https://github.com/nekoallergy22/simple-blog/actions)
 
 ## ✨ 特徴
 
+- 🎓 **AI学習コース** - 基礎から応用まで体系的に学習
 - 🚀 **GitHub Actions 完全自動デプロイ** - git push だけで本番反映
 - 📝 **Git-based Workflow** - Markdownファイルで記事管理
-- 🔥 **Firebase Integration** - Firestore + Cloud Functions
+- 🌐 **独自ドメイン対応** - カスタムドメインでの運用
+- 🔥 **Firebase統合** - Firestore + Authentication
 - ☁️ **Cloud Run Hosting** - スケーラブルなサーバーレス環境
 - ⚛️ **Modern Stack** - Next.js 14 + TypeScript + Tailwind CSS
 - 🛠️ **CLI Automation** - 設定から運用まで全自動化
@@ -47,6 +49,24 @@ npm install
 # 開発サーバー起動
 npm run dev
 ```
+
+## 📜 スクリプト一覧
+
+### 🚀 メインスクリプト
+- `deploy-github.sh` - GitHub Actions経由デプロイ（推奨）
+- `deploy-cloudbuild.sh` - Cloud Build直接デプロイ
+- `domain-setup.sh` - 独自ドメイン設定
+
+### ⚙️ セットアップスクリプト
+- `setup-firebase-existing.sh` - Firebase初期設定
+- `setup-github-complete.sh` - GitHub Actions設定
+- `setup-secrets-from-env.sh` - Secrets一括設定
+
+### 🔧 補助スクリプト
+- `check-deployment-status.sh` - デプロイ状況確認
+- `test-sync.sh` - Markdown同期テスト
+- `setup-artifact-registry.sh` - Artifact Registry設定
+- `fix-service-account-permissions.sh` - 権限修正
 
 詳細な手順は [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) を参照してください。
 

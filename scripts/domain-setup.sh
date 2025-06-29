@@ -29,9 +29,9 @@ log_manual() {
     echo -e "${PURPLE}[MANUAL]${NC} $1"
 }
 
-# エラーハンドリング
+# エラーハンドリング（一部のコマンドでは無効化）
 set -e
-trap 'log_error "セットアップに失敗しました。"; exit 1' ERR
+trap 'log_error "セットアップに失敗しました。詳細は上記のエラーメッセージを確認してください。"; exit 1' ERR
 
 # .env.localから設定を読み込み
 if [ ! -f ".env.local" ]; then
@@ -147,25 +147,53 @@ log_info "DNS Aレコードを作成しています..."
 EXISTING_A_RECORD=$(gcloud dns record-sets list --zone=$ZONE_NAME --filter="type:A AND name:$CUSTOM_DOMAIN." --format="value(rrdatas[0])" --project=$PROJECT_ID 2>/dev/null || echo "")
 
 if [ -z "$EXISTING_A_RECORD" ]; then
-    gcloud dns record-sets create "$CUSTOM_DOMAIN." \
+    # 新規作成を試行
+    if gcloud dns record-sets create "$CUSTOM_DOMAIN." \
         --zone=$ZONE_NAME \
         --type=A \
         --ttl=300 \
         --rrdatas=$STATIC_IP \
-        --project=$PROJECT_ID
-    log_success "DNS Aレコードを作成しました: $CUSTOM_DOMAIN -> $STATIC_IP"
-else
-    if [ "$EXISTING_A_RECORD" != "$STATIC_IP" ]; then
-        # レコードを更新
-        gcloud dns record-sets update "$CUSTOM_DOMAIN." \
+        --project=$PROJECT_ID 2>/dev/null; then
+        log_success "DNS Aレコードを作成しました: $CUSTOM_DOMAIN -> $STATIC_IP"
+    else
+        log_warning "DNS Aレコードの作成に失敗しました。手動で作成します..."
+        # 手動でAレコードを作成
+        gcloud dns record-sets create "$CUSTOM_DOMAIN." \
             --zone=$ZONE_NAME \
             --type=A \
             --ttl=300 \
             --rrdatas=$STATIC_IP \
-            --project=$PROJECT_ID
-        log_success "DNS Aレコードを更新しました: $CUSTOM_DOMAIN -> $STATIC_IP"
+            --project=$PROJECT_ID || {
+            log_error "DNS Aレコードの作成に失敗しました"
+            log_info "手動で作成してください: gcloud dns record-sets create \"$CUSTOM_DOMAIN.\" --zone=$ZONE_NAME --type=A --ttl=300 --rrdatas=$STATIC_IP --project=$PROJECT_ID"
+            exit 1
+        }
+        log_success "DNS Aレコードを手動作成しました: $CUSTOM_DOMAIN -> $STATIC_IP"
+    fi
+else
+    if [ "$EXISTING_A_RECORD" != "$STATIC_IP" ]; then
+        # レコードを更新
+        if gcloud dns record-sets update "$CUSTOM_DOMAIN." \
+            --zone=$ZONE_NAME \
+            --type=A \
+            --ttl=300 \
+            --rrdatas=$STATIC_IP \
+            --project=$PROJECT_ID 2>/dev/null; then
+            log_success "DNS Aレコードを更新しました: $CUSTOM_DOMAIN -> $STATIC_IP"
+        else
+            log_warning "DNS Aレコード更新に失敗しました。既存のレコードを削除して再作成します..."
+            gcloud dns record-sets delete "$CUSTOM_DOMAIN." --zone=$ZONE_NAME --type=A --project=$PROJECT_ID --quiet 2>/dev/null || true
+            sleep 5
+            gcloud dns record-sets create "$CUSTOM_DOMAIN." \
+                --zone=$ZONE_NAME \
+                --type=A \
+                --ttl=300 \
+                --rrdatas=$STATIC_IP \
+                --project=$PROJECT_ID
+            log_success "DNS Aレコードを再作成しました: $CUSTOM_DOMAIN -> $STATIC_IP"
+        fi
     else
-        log_info "DNS Aレコードは既に正しく設定されています"
+        log_info "DNS Aレコードは既に正しく設定されています: $CUSTOM_DOMAIN -> $STATIC_IP"
     fi
 fi
 
@@ -222,6 +250,20 @@ if [ -z "$EXISTING_BACKEND" ]; then
     log_success "バックエンドサービスを作成しました: $BACKEND_SERVICE_NAME"
 else
     log_info "バックエンドサービスは既に存在します: $BACKEND_SERVICE_NAME"
+    # 既存のバックエンドサービスにNEGが追加されているか確認
+    EXISTING_BACKENDS=$(gcloud compute backend-services describe $BACKEND_SERVICE_NAME --global --format="value(backends[].group)" --project=$PROJECT_ID 2>/dev/null || echo "")
+    NEG_FULL_PATH="projects/$PROJECT_ID/regions/$REGION/networkEndpointGroups/$NEG_NAME"
+    if [[ "$EXISTING_BACKENDS" != *"$NEG_FULL_PATH"* ]]; then
+        log_info "NEGをバックエンドサービスに追加しています..."
+        gcloud compute backend-services add-backend $BACKEND_SERVICE_NAME \
+            --global \
+            --network-endpoint-group=$NEG_NAME \
+            --network-endpoint-group-region=$REGION \
+            --project=$PROJECT_ID
+        log_success "NEGをバックエンドサービスに追加しました"
+    else
+        log_info "NEGは既にバックエンドサービスに追加されています"
+    fi
 fi
 
 # URL マップの作成
@@ -278,36 +320,67 @@ HTTP_FORWARDING_RULE_NAME="${SERVICE_NAME}-http-forwarding-rule"
 EXISTING_HTTP_RULE=$(gcloud compute forwarding-rules list --global --filter="name:$HTTP_FORWARDING_RULE_NAME" --format="value(name)" --project=$PROJECT_ID 2>/dev/null || echo "")
 
 if [ -z "$EXISTING_HTTP_RULE" ]; then
-    # 一時的なYAMLファイルを作成
-    cat > /tmp/redirect-map.yaml <<EOF
-name: ${URL_MAP_NAME}-redirect
+    # 一時的なYAMLファイルを作成（適切な形式で）
+    REDIRECT_YAML="/tmp/redirect-${RANDOM}.yaml"
+    cat > "$REDIRECT_YAML" <<'EOF'
+name: PLACEHOLDER_NAME
 defaultUrlRedirect:
   httpsRedirect: true
   redirectResponseCode: MOVED_PERMANENTLY_DEFAULT
 EOF
     
+    # プレースホルダーを実際の名前に置換
+    sed -i "s/PLACEHOLDER_NAME/${URL_MAP_NAME}-redirect/g" "$REDIRECT_YAML"
+    
     # HTTP to HTTPS リダイレクト用のURL マップ
-    gcloud compute url-maps import ${URL_MAP_NAME}-redirect \
-        --source=/tmp/redirect-map.yaml \
+    if gcloud compute url-maps import ${URL_MAP_NAME}-redirect \
+        --source="$REDIRECT_YAML" \
         --global \
-        --project=$PROJECT_ID
+        --project=$PROJECT_ID 2>/dev/null; then
+        log_success "リダイレクト用URLマップを作成しました"
+    else
+        log_warning "URLマップのインポートに失敗しました。直接作成を試行します..."
+        # 直接作成を試行
+        gcloud compute url-maps create ${URL_MAP_NAME}-redirect \
+            --global \
+            --project=$PROJECT_ID \
+            --default-url-redirect-https \
+            --default-url-redirect-response-code=301 2>/dev/null || {
+            log_error "リダイレクト用URLマップの作成に失敗しました"
+            rm -f "$REDIRECT_YAML"
+            exit 1
+        }
+        log_success "リダイレクト用URLマップを直接作成しました"
+    fi
     
     # HTTPプロキシの作成
-    gcloud compute target-http-proxies create ${SERVICE_NAME}-http-proxy \
+    if gcloud compute target-http-proxies create ${SERVICE_NAME}-http-proxy \
         --url-map=${URL_MAP_NAME}-redirect \
         --global \
-        --project=$PROJECT_ID
+        --project=$PROJECT_ID; then
+        log_success "HTTPプロキシを作成しました"
+    else
+        log_error "HTTPプロキシの作成に失敗しました"
+        rm -f "$REDIRECT_YAML"
+        exit 1
+    fi
     
     # HTTP転送ルールの作成
-    gcloud compute forwarding-rules create $HTTP_FORWARDING_RULE_NAME \
+    if gcloud compute forwarding-rules create $HTTP_FORWARDING_RULE_NAME \
         --address=$IP_NAME \
         --global \
         --target-http-proxy=${SERVICE_NAME}-http-proxy \
         --ports=80 \
-        --project=$PROJECT_ID
+        --project=$PROJECT_ID; then
+        log_success "HTTP転送ルールを作成しました"
+    else
+        log_error "HTTP転送ルールの作成に失敗しました"
+        rm -f "$REDIRECT_YAML"
+        exit 1
+    fi
     
     # 一時ファイルを削除
-    rm -f /tmp/redirect-map.yaml
+    rm -f "$REDIRECT_YAML"
     
     log_success "HTTP to HTTPS リダイレクトを設定しました"
 else
@@ -336,6 +409,43 @@ echo ""
 echo "⚠️  Firebase Authentication の設定更新も必要です:"
 echo "   Firebase Consoleで '$CUSTOM_DOMAIN' を承認済みドメインに追加してください"
 echo "   https://console.firebase.google.com/project/$PROJECT_ID/authentication/settings"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# 設定状態の最終確認
+echo ""
+log_info "設定状態の最終確認を実行しています..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# SSL証明書の状態確認
+SSL_STATUS=$(gcloud compute ssl-certificates describe $CERT_NAME --global --format="value(managed.status)" --project=$PROJECT_ID 2>/dev/null || echo "UNKNOWN")
+echo "🔒 SSL証明書状態: $SSL_STATUS"
+if [ "$SSL_STATUS" = "ACTIVE" ]; then
+    echo "   ✅ SSL証明書は有効です"
+elif [ "$SSL_STATUS" = "PROVISIONING" ]; then
+    echo "   🔄 SSL証明書は発行中です（最大24時間）"
+else
+    echo "   ⚠️  SSL証明書の状態を確認してください"
+fi
+
+# DNS状態確認
+echo "🌐 DNS設定確認:"
+echo "   ドメイン: $CUSTOM_DOMAIN"
+echo "   IPアドレス: $STATIC_IP"
+if command -v nslookup >/dev/null 2>&1; then
+    RESOLVED_IP=$(nslookup $CUSTOM_DOMAIN 2>/dev/null | grep "Address:" | tail -1 | awk '{print $2}' || echo "未解決")
+    if [ "$RESOLVED_IP" = "$STATIC_IP" ]; then
+        echo "   ✅ DNS解決成功: $RESOLVED_IP"
+    else
+        echo "   🔄 DNS伝播中: $RESOLVED_IP (最大48時間)"
+    fi
+else
+    echo "   ℹ️  nslookup が利用できません"
+fi
+
+# サービス状態確認
+SERVICE_READY=$(gcloud run services describe $SERVICE_NAME --region=$REGION --format="value(status.conditions[0].status)" --project=$PROJECT_ID 2>/dev/null || echo "UNKNOWN")
+echo "🚀 Cloud Runサービス状態: $SERVICE_READY"
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 log_success "Tech-Master ドメインセットアップスクリプトが完了しました！"

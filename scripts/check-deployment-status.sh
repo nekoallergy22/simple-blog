@@ -2,8 +2,13 @@
 
 # Cloud Run デプロイ状況確認スクリプト
 
-PROJECT_ID=${1:-"pid-my-portfolio-project"}
-SERVICE_NAME=${2:-"simple-blog"}
+# .env.localから環境変数を読み込み
+if [ -f ".env.local" ]; then
+    source .env.local
+fi
+
+PROJECT_ID=${1:-${GCP_PROJECT_ID:-"pid-my-portfolio-project"}}
+SERVICE_NAME=${2:-${SERVICE_NAME:-"simple-blog"}}
 REGION=${3:-"asia-northeast1"}
 
 echo "🔍 Cloud Run デプロイ状況確認"
