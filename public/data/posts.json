@@ -9,8 +9,8 @@
     "date": "2025-06-29",
     "difficulty": "beginner",
     "number": 0,
-    "createdAt": "2025-06-29T14:26:13.943Z",
-    "updatedAt": "2025-06-29T14:26:13.943Z"
+    "createdAt": "2025-06-29T14:37:19.333Z",
+    "updatedAt": "2025-06-29T14:37:19.333Z"
   },
   {
     "id": "ai-what-is-artificial-intelligence",
@@ -22,8 +22,8 @@
     "date": "2025-6-29",
     "difficulty": "basic",
     "number": 1,
-    "createdAt": "2025-06-29T14:26:13.946Z",
-    "updatedAt": "2025-06-29T14:26:13.946Z"
+    "createdAt": "2025-06-29T14:37:19.336Z",
+    "updatedAt": "2025-06-29T14:37:19.336Z"
   },
   {
     "id": "ai-fundamental-problems",
@@ -35,8 +35,8 @@
     "date": "2025-6-29",
     "difficulty": "basic",
     "number": 2,
-    "createdAt": "2025-06-29T14:26:13.946Z",
-    "updatedAt": "2025-06-29T14:26:13.946Z"
+    "createdAt": "2025-06-29T14:37:19.337Z",
+    "updatedAt": "2025-06-29T14:37:19.337Z"
   },
   {
     "id": "ai-search-algorithms-basics",
@@ -48,8 +48,8 @@
     "date": "2025-6-29",
     "difficulty": "basic",
     "number": 3,
-    "createdAt": "2025-06-29T14:26:13.947Z",
-    "updatedAt": "2025-06-29T14:26:13.947Z"
+    "createdAt": "2025-06-29T14:37:19.337Z",
+    "updatedAt": "2025-06-29T14:37:19.337Z"
   },
   {
     "id": "ai-game-theory-advanced-search",
@@ -61,8 +61,8 @@
     "date": "2025-6-29",
     "difficulty": "basic",
     "number": 4,
-    "createdAt": "2025-06-29T14:26:13.947Z",
-    "updatedAt": "2025-06-29T14:26:13.947Z"
+    "createdAt": "2025-06-29T14:37:19.338Z",
+    "updatedAt": "2025-06-29T14:37:19.338Z"
   },
   {
     "id": "ai-knowledge-representation-ontology",
@@ -74,7 +74,7 @@
     "date": "2025-6-29",
     "difficulty": "basic",
     "number": 5,
-    "createdAt": "2025-06-29T14:26:13.947Z",
-    "updatedAt": "2025-06-29T14:26:13.947Z"
+    "createdAt": "2025-06-29T14:37:19.338Z",
+    "updatedAt": "2025-06-29T14:37:19.338Z"
   }
 ]
