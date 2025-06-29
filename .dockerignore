@@ -12,7 +12,8 @@ README.md
 .next
 .vercel
 functions
-scripts
+scripts/*
+!scripts/generate-static-json.js
 *.md
 DEPLOYMENT_GUIDE.md
 memo
