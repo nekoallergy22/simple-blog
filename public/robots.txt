@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tech-master.com/sitemap.xml
+Sitemap: https://techmaster.dev/sitemap.xml

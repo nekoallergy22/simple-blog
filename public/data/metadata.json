@@ -1,0 +1,58 @@
+{
+  "totalPosts": 6,
+  "sections": {
+    "ai": {
+      "count": 6,
+      "latestDate": 1751155200000,
+      "posts": [
+        {
+          "slug": "ai-summary",
+          "title": "Untitled",
+          "date": "2025-06-29"
+        },
+        {
+          "slug": "ai-what-is-artificial-intelligence",
+          "title": "人工知能の定義と分類",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "ai-fundamental-problems",
+          "title": "AI分野の根本的な問題",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "ai-search-algorithms-basics",
+          "title": "探索アルゴリズムの基礎",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "ai-game-theory-advanced-search",
+          "title": "ゲーム理論と高度な探索手法",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "ai-knowledge-representation-ontology",
+          "title": "知識表現とオントロジー",
+          "date": "2025-6-29"
+        }
+      ]
+    }
+  },
+  "categories": {
+    "ai-course": {
+      "count": 6,
+      "section": "ai"
+    }
+  },
+  "lastUpdated": "2025-06-29T14:26:13.950Z",
+  "stats": {
+    "totalPosts": 6,
+    "activeSections": 1,
+    "latestPost": {
+      "slug": "ai-summary",
+      "title": "Untitled",
+      "date": "2025-06-29",
+      "section": "ai"
+    }
+  }
+}

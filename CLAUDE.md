@@ -8,16 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### システム構成
 - **フロントエンド**: Next.js 14.2.5 (App Router) + TypeScript + Tailwind CSS
-- **バックエンド**: Firebase (Firestore, Storage) + Cloud Run API
+- **データソース**: Static JSON (ビルド時生成) + Markdown Fallback
 - **ホスティング**: Google Cloud Run (コンテナ化)
 - **デプロイ**: GitHub Actions CI/CD
-- **記事管理**: セクション別ローカルMarkdownファイル → Firestore同期
+- **記事管理**: セクション別ローカルMarkdownファイル → Static JSON生成
 - **ルーティング**: セクション別ルート (/ai, /python, /datascience, /tensorflow)
 
-### ハイブリッドデータ戦略
-- **Firebase優先**: 本番環境ではFirestoreから記事取得
-- **Markdownフォールバック**: Firebase未設定時はローカルMarkdownから取得
-- **自動同期**: `scripts/sync-md.js`でMarkdown→Firestore同期
+### Static JSON アーキテクチャ
+- **Primary**: ビルド時生成Static JSONから記事取得
+- **Fallback**: JSON取得失敗時はMarkdownファイルから直接取得
+- **Generation**: `scripts/generate-static-json.js`でMarkdown→JSON変換
 
 ## 技術スタック（実装済み）
 
@@ -26,7 +26,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Next.js**: 14.2.5 (App Router, standalone output設定済み)
 - **TypeScript**: 5.5.4 
 - **Tailwind CSS**: 3.4.7 + @tailwindcss/typography
-- **Firebase**: 10.12.2 (client) + 12.1.1 (admin)
 
 ### Markdownレンダリング
 - **react-markdown**: 9.0.1 + remark-gfm
@@ -36,7 +35,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 開発ツール
 - **ESLint**: 8.57.0 + @typescript-eslint
 - **Prettier**: 3.3.3
-- **Firebase CLI**: 14.9.0
 
 ## 重要なコマンド
 
@@ -54,11 +52,8 @@ npm run type-check
 # ESLint実行
 npm run lint
 
-# Markdownファイル→Firestore同期 (Cloud Run API経由)
-npm run sync-md
-
-# レガシー同期 (直接Firebase Admin使用)
-npm run sync-md-legacy
+# Static JSON生成（Markdownファイル→JSON変換）
+npm run generate-json
 ```
 
 ### テスト・検証
@@ -69,31 +64,27 @@ npm run sync-md-legacy
 ### デプロイ・運用
 ```bash
 # GitHub Actionsによる自動デプロイ（メイン使用方法）
-./scripts/deploy-github.sh "コミットメッセージ"
+git add .
+git commit -m "コミットメッセージ"
+git push origin main
 
-# Markdownローカル同期のみ
-npm run sync-md
+# ローカルでStatic JSON生成テスト
+npm run generate-json
 
-# Firebase Functions単体デプロイ
-./scripts/deploy-functions.sh
-
-# Cloud Run手動デプロイ
-./scripts/deploy-cloudrun.sh
-
-# API サービス単体デプロイ
-./scripts/deploy-api.sh
+# ローカルビルドテスト
+npm run build
 ```
 
 ### セットアップ・初期設定
 ```bash
-# 初回セットアップ（.env.localから自動読み取り）
-./scripts/setup-gcp.sh
-./scripts/fix-service-account-permissions.sh
-./scripts/setup-artifact-registry.sh
-./scripts/setup-firebase-files.sh
+# 依存関係インストール
+npm install
 
-# GitHub Secrets設定
-./scripts/setup-secrets-from-env.sh
+# 開発サーバー起動
+npm run dev
+
+# プロダクションビルドテスト
+npm run generate-json && npm run build
 ```
 
 ## プロジェクト構造
@@ -132,15 +123,15 @@ src/
 - **セクション構造**: 各セクション専用のルート（/ai/posts/[slug]）
 - **既存記事**: `ai-course`カテゴリはAIセクションに自動マッピング
 
-### Firebase設定
-- **Firestore Collections**: `posts`（記事データ）
-- **Functions**: Node.js 18, TypeScript設定済み  
-- **Security Rules**: firestore.rules設定済み
+### Static JSON設定
+- **JSON生成**: `scripts/generate-static-json.js`でビルド時生成
+- **出力先**: `public/data/` ディレクトリ
+- **ファイル構成**: posts.json（全記事）、sections/*.json（セクション別）、metadata.json（メタデータ）
 
 ### GitHub Actions
 - **トリガー**: mainブランチpush + 手動実行
-- **処理流**: Markdown同期 → ビルド → Dockerイメージ作成（Artifact Registry） → Cloud Runデプロイ
-- **必要Secrets**: 12個（Firebase, GCP, GitHub設定）
+- **処理流**: Static JSON生成 → Next.jsビルド → Dockerイメージ作成（Artifact Registry） → Cloud Runデプロイ
+- **必要Secrets**: GCP認証用のみ（Firebase関連削除済み）
 - **Dockerイメージ保存**: Artifact Registry（Container Registry後継）
 
 ## 記事管理フロー
@@ -165,14 +156,15 @@ Markdownで記事本文を記述
 1. `posts/XX-title.md`作成
 2. frontmatter設定
 3. `git add . && git commit -m "新記事追加"`
-4. `git push origin main`（自動デプロイ）
+4. `git push origin main`（GitHub Actions自動デプロイ）
 
 ## 開発時の注意点
 
-### Firebase連携
-- **環境変数**: `.env.local`または環境に設定必要
-- **フォールバック**: Firebase未設定時は自動的にMarkdownファイルを使用
-- **同期**: `npm run sync-md`でローカル→Firestore同期
+### データ連携
+- **環境変数**: 不要（Firebase削除済み）
+- **プライマリ**: Static JSON（ビルド時生成）
+- **フォールバック**: JSON取得失敗時は自動的にMarkdownファイルを使用
+- **生成**: `npm run generate-json`でMarkdown→JSON変換
 
 ### Next.js設定
 - **出力形式**: standalone（Dockerコンテナ用）
@@ -191,42 +183,43 @@ Markdownで記事本文を記述
 ## トラブルシューティング
 
 ### よくある問題
-1. **Firebase接続エラー**: 環境変数確認、Markdownフォールバック確認
-2. **ビルドエラー**: `npm run type-check`で型エラー確認
+1. **ビルドエラー**: `npm run type-check`で型エラー確認
+2. **JSON生成エラー**: `npm run generate-json`実行、Markdownフォーマット確認
 3. **デプロイエラー**: GitHub Actions logs確認、Artifact Registry権限確認
-4. **記事表示されない**: `npm run sync-md`実行、Firestore接続確認
-5. **Docker push失敗**: `./scripts/fix-service-account-permissions.sh`実行
-6. **型エラー**: Post interface変更時はsrc/types/index.ts更新必要
-7. **セクション表示問題**: section fieldがai以外でも正しく設定されているか確認
+4. **記事表示されない**: `npm run generate-json`実行、public/data/ファイル確認
+5. **型エラー**: Post interface変更時はsrc/types/index.ts更新必要
+6. **セクション表示問題**: frontmatterのsection fieldが正しく設定されているか確認
 
 ### デバッグコマンド
 ```bash
-# Firebase接続テスト（ログ確認）
-npm run dev  # コンソールでFirebase接続ログ確認
-
-# Markdown同期テスト
-npm run sync-md  # 同期ログ確認
+# JSON生成テスト
+npm run generate-json  # JSON生成ログ確認
 
 # ビルドテスト
 npm run build  # ビルドエラー確認
 
-# Artifact Registry権限確認
-./scripts/fix-service-account-permissions.sh
-./scripts/setup-artifact-registry.sh
+# 型チェック
+npm run type-check  # TypeScriptエラー確認
+
+# Lint確認
+npm run lint  # ESLintエラー確認
+
+# 開発サーバーテスト
+npm run dev  # ローカル動作確認
 ```
 
 ## 重要な実装パターン
 
 ### データ取得の優先順位
-1. **Firebase Firestore**: 本番環境での優先データソース
-2. **Markdown Fallback**: Firebase接続失敗時の自動フォールバック
+1. **Static JSON**: ビルド時生成されたJSON（プライマリ）
+2. **Markdown Fallback**: JSON取得失敗時の自動フォールバック
 3. **Error Handling**: try-catch ブロックで適切なエラーログ出力
 
 ### 記事データの流れ
 ```
-Markdown Files → sync-md.js → Firestore → Posts API → Component Rendering
-     ↓ (fallback)                                       ↑
-Local Markdown ←──────────────────────────────────────┘
+Markdown Files → generate-static-json.js → Static JSON → Component Rendering
+     ↓ (fallback)                                           ↑
+Local Markdown ←─────────────────────────────────────────┘
 ```
 
 ### セクション管理
@@ -238,35 +231,25 @@ Local Markdown ←────────────────────�
 
 ### 実装完了
 - ✅ Next.js 14 + App Router完全設定（セクション別ルーティング）
-- ✅ Firebase Firestore統合（セクション対応）
+- ✅ Static JSON アーキテクチャ（Firebase削除済み）
 - ✅ Markdown処理（react-markdown + syntax highlighting）
 - ✅ レスポンシブUI（Tailwind CSS）
 - ✅ Tech-Master統合プラットフォーム
-- ✅ AIセクション：24記事AI学習コース（/ai）
+- ✅ AIセクション：6記事AI学習コース（/ai）
 - ✅ Python/DataScience/TensorFlowセクション（準備中）
-- ✅ GitHub Actions CI/CD
+- ✅ GitHub Actions CI/CD（簡素化済み）
 - ✅ Cloud Run Dockerデプロイ
-- ✅ 自動化スクリプト一式
 
 ### Git状況
 - **ブランチ**: main（アクティブ開発）
 - **デプロイ**: GitHub Actions自動実行
-- **最新変更**: Simple Blog → Tech-Master変更、セクション別ルーティング実装
+- **最新変更**: Firebase削除、Static JSONアーキテクチャ移行完了
 
 ## 環境変数の設定
 
-### 必須環境変数（.env.local）
+### オプション環境変数（.env.local）
 ```bash
-# Firebase Web Configuration (Public)
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-
-# Firebase Admin Configuration (Private)  
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=service-account-email
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-
-# Project Configuration
+# Project Configuration (デプロイ時のみ必要)
 GCP_PROJECT_ID=your-project-id
 GITHUB_REPO=username/repository-name
 CUSTOM_DOMAIN=yourdomain.com
@@ -275,9 +258,9 @@ SERVICE_NAME=tech-master
 
 ### 環境変数の確認
 ```bash
-# Firebase接続状況確認
-npm run dev  # コンソールでFirebase初期化ログ確認
+# ローカル開発（環境変数不要）
+npm run dev  # すぐに起動可能
 
-# 環境変数が正しく読み込まれているか確認
-echo $NEXT_PUBLIC_FIREBASE_PROJECT_ID
+# 環境変数確認（デプロイ時のみ）
+cat .env.local
 ```
