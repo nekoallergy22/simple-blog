@@ -5,13 +5,14 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # package.json と package-lock.json をコピー
-COPY package*.json ./
+COPY api/package*.json ./
 
 # 依存関係をインストール
 RUN npm ci --only=production
 
-# ソースコードをコピー
-COPY . .
+# APIソースコードをコピー
+COPY api/src ./src
+COPY api/tsconfig.json ./
 
 # TypeScriptビルド
 RUN npm run build
@@ -34,7 +35,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 
 # postsディレクトリをコピー（Markdownファイル用）
-COPY ../posts ./posts
+COPY posts ./posts
 
 # 権限設定
 RUN chown -R nextjs:nodejs /app

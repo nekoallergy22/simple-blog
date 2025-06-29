@@ -46,9 +46,8 @@ jobs:
         run: gcloud auth configure-docker $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev
 
       - name: Build API Docker image
-        working-directory: ./api
         run: |
-          docker build -t $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA .
+          docker build -f api/Dockerfile -t $ARTIFACT_REGISTRY_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$API_SERVICE_NAME:$GITHUB_SHA .
 
       - name: Push API Docker image
         run: |
