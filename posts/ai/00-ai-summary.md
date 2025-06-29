@@ -1,4 +1,16 @@
-# summary
+---
+title: "AI学習コース 完全ガイド"
+date: "2025-6-29"
+category: "ai-course"
+section: "ai"
+slug: "00-ai-summary"
+difficulty: "beginner"
+number: 0
+---
+
+# AI学習コース 完全ガイド
+
+このガイドでは、人工知能（AI）の基礎から最新技術まで、体系的に学習できる全80記事のコースマップを提供しています。
 
 ## 基礎編（1-12記事）
 

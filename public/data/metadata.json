@@ -3,12 +3,12 @@
   "sections": {
     "ai": {
       "count": 6,
-      "latestDate": 1751155200000,
+      "latestDate": 1751122800000,
       "posts": [
         {
           "slug": "ai-summary",
-          "title": "Untitled",
-          "date": "2025-06-29"
+          "title": "AI学習コース 完全ガイド",
+          "date": "2025-6-29"
         },
         {
           "slug": "ai-what-is-artificial-intelligence",
@@ -44,14 +44,14 @@
       "section": "ai"
     }
   },
-  "lastUpdated": "2025-06-29T14:37:19.341Z",
+  "lastUpdated": "2025-06-29T14:50:53.101Z",
   "stats": {
     "totalPosts": 6,
     "activeSections": 1,
     "latestPost": {
       "slug": "ai-summary",
-      "title": "Untitled",
-      "date": "2025-06-29",
+      "title": "AI学習コース 完全ガイド",
+      "date": "2025-6-29",
       "section": "ai"
     }
   }
