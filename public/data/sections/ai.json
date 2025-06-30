@@ -8,13 +8,15 @@
     "tags": [
       "概要",
       "カリキュラム",
-      "ガイド"
+      "ガイド",
+      "コースマップ",
+      "学習計画"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "目次",
     "number": 0,
-    "createdAt": "2025-06-30T08:23:31.716Z",
-    "updatedAt": "2025-06-30T08:23:31.716Z"
+    "createdAt": "2025-06-30T15:49:27.814Z",
+    "updatedAt": "2025-06-30T15:49:27.814Z"
   },
   {
     "id": "ai-what-is-artificial-intelligence",
@@ -25,13 +27,15 @@
     "tags": [
       "人工知能",
       "AI定義",
-      "AI分類"
+      "AI分類",
+      "機械学習",
+      "特化型AI"
     ],
     "date": "2025-6-29",
-    "difficulty": "basic",
+    "category": "基礎編",
     "number": 1,
-    "createdAt": "2025-06-30T08:23:31.716Z",
-    "updatedAt": "2025-06-30T08:23:31.716Z"
+    "createdAt": "2025-06-30T15:49:27.814Z",
+    "updatedAt": "2025-06-30T15:49:27.814Z"
   },
   {
     "id": "ai-fundamental-problems",
@@ -42,13 +46,15 @@
     "tags": [
       "シンギュラリティ",
       "チューリングテスト",
-      "AI哲学"
+      "AI哲学",
+      "AGI",
+      "人工意識"
     ],
     "date": "2025-6-29",
-    "difficulty": "basic",
+    "category": "基礎編",
     "number": 2,
-    "createdAt": "2025-06-30T08:23:31.717Z",
-    "updatedAt": "2025-06-30T08:23:31.717Z"
+    "createdAt": "2025-06-30T15:49:27.815Z",
+    "updatedAt": "2025-06-30T15:49:27.815Z"
   },
   {
     "id": "ai-search-algorithms-basics",
@@ -59,13 +65,15 @@
     "tags": [
       "探索アルゴリズム",
       "幅優先探索",
-      "モンテカルロ法"
+      "モンテカルロ法",
+      "深さ優先探索",
+      "最適化問題"
     ],
     "date": "2025-6-29",
-    "difficulty": "basic",
+    "category": "基礎編",
     "number": 3,
-    "createdAt": "2025-06-30T08:23:31.717Z",
-    "updatedAt": "2025-06-30T08:23:31.717Z"
+    "createdAt": "2025-06-30T15:49:27.815Z",
+    "updatedAt": "2025-06-30T15:49:27.815Z"
   },
   {
     "id": "ai-game-theory-advanced-search",
@@ -76,13 +84,15 @@
     "tags": [
       "ゲーム理論",
       "ミニマックス",
-      "αβ法"
+      "αβ法",
+      "ゲームAI",
+      "戦略探索"
     ],
     "date": "2025-6-29",
-    "difficulty": "basic",
+    "category": "基礎編",
     "number": 4,
-    "createdAt": "2025-06-30T08:23:31.717Z",
-    "updatedAt": "2025-06-30T08:23:31.717Z"
+    "createdAt": "2025-06-30T15:49:27.816Z",
+    "updatedAt": "2025-06-30T15:49:27.816Z"
   },
   {
     "id": "ai-knowledge-representation-ontology",
@@ -93,13 +103,15 @@
     "tags": [
       "知識表現",
       "オントロジー",
-      "セマンティックWeb"
+      "セマンティックWeb",
+      "知識グラフ",
+      "推論エンジン"
     ],
     "date": "2025-6-29",
-    "difficulty": "basic",
+    "category": "基礎編",
     "number": 5,
-    "createdAt": "2025-06-30T08:23:31.717Z",
-    "updatedAt": "2025-06-30T08:23:31.717Z"
+    "createdAt": "2025-06-30T15:49:27.816Z",
+    "updatedAt": "2025-06-30T15:49:27.816Z"
   },
   {
     "id": "expert-systems-data-mining",
@@ -110,13 +122,15 @@
     "tags": [
       "エキスパートシステム",
       "データマイニング",
-      "MYCIN"
+      "MYCIN",
+      "ルールベース",
+      "パターン発見"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 6,
-    "createdAt": "2025-06-30T08:23:31.717Z",
-    "updatedAt": "2025-06-30T08:23:31.717Z"
+    "createdAt": "2025-06-30T15:49:27.816Z",
+    "updatedAt": "2025-06-30T15:49:27.816Z"
   },
   {
     "id": "machine-learning-basics",
@@ -127,13 +141,15 @@
     "tags": [
       "機械学習",
       "スパムフィルター",
-      "レコメンデーション"
+      "レコメンデーション",
+      "パターン認識",
+      "アルゴリズム"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 7,
-    "createdAt": "2025-06-30T08:23:31.718Z",
-    "updatedAt": "2025-06-30T08:23:31.718Z"
+    "createdAt": "2025-06-30T15:49:27.817Z",
+    "updatedAt": "2025-06-30T15:49:27.817Z"
   },
   {
     "id": "deep-learning-history",
@@ -144,13 +160,15 @@
     "tags": [
       "ディープラーニング",
       "ニューラルネットワーク",
-      "アルファ碁"
+      "アルファ碁",
+      "CNN",
+      "飛躍的発展"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 8,
-    "createdAt": "2025-06-30T08:23:31.718Z",
-    "updatedAt": "2025-06-30T08:23:31.718Z"
+    "createdAt": "2025-06-30T15:49:27.817Z",
+    "updatedAt": "2025-06-30T15:49:27.817Z"
   },
   {
     "id": "supervised-learning-classification",
@@ -161,13 +179,15 @@
     "tags": [
       "教師あり学習",
       "分類",
-      "SVM"
+      "SVM",
+      "ロジスティック回帰",
+      "決定木"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 9,
-    "createdAt": "2025-06-30T08:23:31.718Z",
-    "updatedAt": "2025-06-30T08:23:31.718Z"
+    "createdAt": "2025-06-30T15:49:27.817Z",
+    "updatedAt": "2025-06-30T15:49:27.817Z"
   },
   {
     "id": "supervised-learning-regression-ensemble",
@@ -178,13 +198,15 @@
     "tags": [
       "回帰",
       "アンサンブル",
-      "ランダムフォレスト"
+      "ランダムフォレスト",
+      "線形回帰",
+      "ブースティング"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 10,
-    "createdAt": "2025-06-30T08:23:31.719Z",
-    "updatedAt": "2025-06-30T08:23:31.719Z"
+    "createdAt": "2025-06-30T15:49:27.818Z",
+    "updatedAt": "2025-06-30T15:49:27.818Z"
   },
   {
     "id": "unsupervised-learning-clustering",
@@ -195,13 +217,15 @@
     "tags": [
       "教師なし学習",
       "クラスタリング",
-      "k-means法"
+      "k-means法",
+      "階層クラスタリング",
+      "DBSCAN"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 11,
-    "createdAt": "2025-06-30T08:23:31.719Z",
-    "updatedAt": "2025-06-30T08:23:31.719Z"
+    "createdAt": "2025-06-30T15:49:27.818Z",
+    "updatedAt": "2025-06-30T15:49:27.818Z"
   },
   {
     "id": "unsupervised-learning-dimensionality-reduction",
@@ -212,12 +236,14 @@
     "tags": [
       "次元削減",
       "主成分分析",
-      "t-SNE"
+      "t-SNE",
+      "PCA",
+      "特徴量選択"
     ],
     "date": "2025-6-29",
-    "difficulty": "beginner",
+    "category": "基礎編",
     "number": 12,
-    "createdAt": "2025-06-30T08:23:31.719Z",
-    "updatedAt": "2025-06-30T08:23:31.719Z"
+    "createdAt": "2025-06-30T15:49:27.818Z",
+    "updatedAt": "2025-06-30T15:49:27.818Z"
   }
 ]

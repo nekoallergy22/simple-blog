@@ -56,7 +56,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
           h3: ({ children }) => (
             <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3 flex items-center">
-              <span className="text-blue-600 mr-2">■</span>
+              <span className="mr-2" style={{ color: 'var(--main-color)' }}>■</span>
               {children}
             </h3>
           ),
@@ -81,14 +81,20 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             </li>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 bg-blue-50 text-gray-700 italic">
+            <blockquote 
+              className="border-l-4 pl-4 py-2 mb-4 text-gray-700 italic"
+              style={{ 
+                borderLeftColor: 'var(--main-color)', 
+                backgroundColor: 'var(--main-color-bg)' 
+              }}
+            >
               {children}
             </blockquote>
           ),
           a: ({ href, children }) => (
             <a 
               href={href} 
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="underline link-main"
               target="_blank"
               rel="noopener noreferrer"
             >

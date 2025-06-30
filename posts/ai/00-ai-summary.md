@@ -1,11 +1,11 @@
 ---
 title: "AI学習コース 完全ガイド"
 date: "2025-6-29"
-tags: ["概要", "カリキュラム", "ガイド"]
+tags: ["概要", "カリキュラム", "ガイド", "コースマップ", "学習計画"]
 section: "ai"
 slug: "00-ai-summary"
-difficulty: "beginner"
 number: 0
+category: "目次"
 ---
 
 # AI学習コース 完全ガイド

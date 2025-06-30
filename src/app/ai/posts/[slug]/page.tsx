@@ -155,10 +155,10 @@ export default async function PostPage({ params }: PostPageProps) {
                   width: "64px",
                   height: "64px",
                   background:
-                    "linear-gradient(135deg, #eff6ff 0%, #faf5ff 100%)",
-                  border: "2px solid #93c5fd",
+                    "linear-gradient(135deg, #f3f4f6 0%, #faf5ff 100%)",
+                  border: "2px solid var(--main-color)",
                   borderRadius: "50%",
-                  color: "#2563eb",
+                  color: "var(--main-color)",
                   fontSize: "20px",
                   fontWeight: "bold",
                   boxShadow:
@@ -216,7 +216,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {previousPost && (
                 <Link
                   href={`/ai/posts/${previousPost.slug}`}
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors group"
+                  className="inline-flex items-center font-medium link-main group"
                 >
                   <svg
                     className="mr-2 w-5 h-5 group-hover:-translate-x-1 transition-transform"
@@ -239,7 +239,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <div className="mx-4">
               <Link
                 href="/ai"
-                className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="inline-flex items-center px-4 py-2 rounded-lg font-medium btn-main"
               >
                 コース一覧に戻る
               </Link>
@@ -249,7 +249,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {nextPost && (
                 <Link
                   href={`/ai/posts/${nextPost.slug}`}
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors group"
+                  className="inline-flex items-center font-medium link-main group"
                 >
                   Next
                   <svg

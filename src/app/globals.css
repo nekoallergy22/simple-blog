@@ -3,10 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --main-color: #8b5cf6; /* Purple-500 - App icon color */
+    --main-color-light: #a78bfa; /* Purple-400 */
+    --main-color-dark: #7c3aed; /* Purple-600 */
+    --main-color-bg: #faf5ff; /* Purple-50 - Light background */
+  }
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-white text-gray-900;
   }
@@ -16,30 +23,49 @@
   .container {
     @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+
   .card {
     @apply bg-white rounded-lg shadow-md border border-gray-200 p-6;
   }
-  
+
   .btn-primary {
     @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
   }
-  
+
   .btn-secondary {
     @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md transition-colors duration-200;
   }
-  
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .btn-main {
+    background-color: var(--main-color);
+    color: white;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-main:hover {
+    background-color: var(--main-color-dark);
+  }
+
+  .link-main {
+    color: var(--main-color);
+    transition: color 0.2s ease;
+  }
+
+  .link-main:hover {
+    color: var(--main-color-dark);
   }
 }

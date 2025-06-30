@@ -1,11 +1,11 @@
 ---
 title: "人工知能の定義と分類"
 date: "2025-6-29"
-tags: ["人工知能", "AI定義", "AI分類"]
+tags: ["人工知能", "AI定義", "AI分類", "機械学習", "特化型AI"]
 section: "ai"
 slug: "01-ai-what-is-artificial-intelligence"
-difficulty: "basic"
 number: 1
+category: "基礎編"
 ---
 
 人工知能（AI）という言葉を聞かない日はありませんが、実際のところAIって何なのでしょうか？この記事では、AIの基本的な仕組みから分類まで、身近な例を使って分かりやすく解説します。

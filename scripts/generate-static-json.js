@@ -30,7 +30,7 @@ function parseMarkdownFile(filePath, section) {
       section: frontMatter.section || section,
       tags: frontMatter.tags || [],
       date: frontMatter.date || new Date().toISOString().split('T')[0],
-      difficulty: frontMatter.difficulty || 'beginner',
+      category: frontMatter.category || '基礎編',
       number: frontMatter.number || parseInt(fileName.match(/^\d+/)?.[0]) || 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

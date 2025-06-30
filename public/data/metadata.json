@@ -74,7 +74,7 @@
     }
   },
   "categories": {},
-  "lastUpdated": "2025-06-30T08:23:31.722Z",
+  "lastUpdated": "2025-06-30T15:49:27.824Z",
   "stats": {
     "totalPosts": 13,
     "activeSections": 1,
@@ -104,6 +104,18 @@
         "ai"
       ]
     },
+    "コースマップ": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "学習計画": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "人工知能": {
       "count": 1,
       "sections": [
@@ -117,6 +129,18 @@
       ]
     },
     "AI分類": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "機械学習": {
+      "count": 2,
+      "sections": [
+        "ai"
+      ]
+    },
+    "特化型AI": {
       "count": 1,
       "sections": [
         "ai"
@@ -140,6 +164,18 @@
         "ai"
       ]
     },
+    "AGI": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "人工意識": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "探索アルゴリズム": {
       "count": 1,
       "sections": [
@@ -153,6 +189,18 @@
       ]
     },
     "モンテカルロ法": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "深さ優先探索": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "最適化問題": {
       "count": 1,
       "sections": [
         "ai"
@@ -176,6 +224,18 @@
         "ai"
       ]
     },
+    "ゲームAI": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "戦略探索": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "知識表現": {
       "count": 1,
       "sections": [
@@ -189,6 +249,18 @@
       ]
     },
     "セマンティックWeb": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "知識グラフ": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "推論エンジン": {
       "count": 1,
       "sections": [
         "ai"
@@ -212,7 +284,13 @@
         "ai"
       ]
     },
-    "機械学習": {
+    "ルールベース": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "パターン発見": {
       "count": 1,
       "sections": [
         "ai"
@@ -225,6 +303,18 @@
       ]
     },
     "レコメンデーション": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "パターン認識": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "アルゴリズム": {
       "count": 1,
       "sections": [
         "ai"
@@ -248,6 +338,18 @@
         "ai"
       ]
     },
+    "CNN": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "飛躍的発展": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "教師あり学習": {
       "count": 1,
       "sections": [
@@ -261,6 +363,18 @@
       ]
     },
     "SVM": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ロジスティック回帰": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "決定木": {
       "count": 1,
       "sections": [
         "ai"
@@ -284,6 +398,18 @@
         "ai"
       ]
     },
+    "線形回帰": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ブースティング": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "教師なし学習": {
       "count": 1,
       "sections": [
@@ -302,6 +428,18 @@
         "ai"
       ]
     },
+    "階層クラスタリング": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "DBSCAN": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
     "次元削減": {
       "count": 1,
       "sections": [
@@ -315,6 +453,18 @@
       ]
     },
     "t-SNE": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "PCA": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "特徴量選択": {
       "count": 1,
       "sections": [
         "ai"
