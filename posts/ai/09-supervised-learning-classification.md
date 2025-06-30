@@ -1,7 +1,7 @@
 ---
 title: "教師あり学習：分類問題"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["教師あり学習", "分類", "SVM"]
 section: "ai"
 slug: "09-supervised-learning-classification"
 difficulty: "beginner"

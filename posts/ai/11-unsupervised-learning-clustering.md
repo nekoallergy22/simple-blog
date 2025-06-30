@@ -1,7 +1,7 @@
 ---
 title: "教師なし学習：クラスタリング"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["教師なし学習", "クラスタリング", "k-means法"]
 section: "ai"
 slug: "11-unsupervised-learning-clustering"
 difficulty: "beginner"

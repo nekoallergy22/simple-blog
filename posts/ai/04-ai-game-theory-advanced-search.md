@@ -1,7 +1,7 @@
 ---
 title: "ゲーム理論と高度な探索手法"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["ゲーム理論", "ミニマックス", "αβ法"]
 section: "ai"
 slug: "04-ai-game-theory-advanced-search"
 difficulty: "basic"

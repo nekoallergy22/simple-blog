@@ -1,7 +1,7 @@
 ---
 title: "探索アルゴリズムの基礎"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["探索アルゴリズム", "幅優先探索", "モンテカルロ法"]
 section: "ai"
 slug: "03-ai-search-algorithms-basics"
 difficulty: "basic"

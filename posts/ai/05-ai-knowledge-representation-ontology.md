@@ -1,7 +1,7 @@
 ---
 title: "知識表現とオントロジー"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["知識表現", "オントロジー", "セマンティックWeb"]
 section: "ai"
 slug: "05-ai-knowledge-representation-ontology"
 difficulty: "basic"

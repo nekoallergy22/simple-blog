@@ -28,7 +28,7 @@ function parseMarkdownFile(filePath, section) {
       title: frontMatter.title || 'Untitled',
       content: content.trim(),
       section: frontMatter.section || section,
-      category: frontMatter.category || `${section}-course`,
+      tags: frontMatter.tags || [],
       date: frontMatter.date || new Date().toISOString().split('T')[0],
       difficulty: frontMatter.difficulty || 'beginner',
       number: frontMatter.number || parseInt(fileName.match(/^\d+/)?.[0]) || 0,
@@ -101,13 +101,14 @@ function generateMetadata(allPosts) {
     }
   }
 
-  // カテゴリ別統計
-  const categories = [...new Set(allPosts.map(p => p.category))];
-  for (const category of categories) {
-    const categoryPosts = allPosts.filter(post => post.category === category);
-    metadata.categories[category] = {
-      count: categoryPosts.length,
-      section: categoryPosts[0]?.section || 'unknown'
+  // タグ別統計
+  const allTags = [...new Set(allPosts.flatMap(p => p.tags || []))];
+  metadata.tags = {};
+  for (const tag of allTags) {
+    const tagPosts = allPosts.filter(post => post.tags?.includes(tag));
+    metadata.tags[tag] = {
+      count: tagPosts.length,
+      sections: [...new Set(tagPosts.map(p => p.section))]
     };
   }
 

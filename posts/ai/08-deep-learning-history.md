@@ -1,7 +1,7 @@
 ---
 title: "ディープラーニングの歴史と発展"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["ディープラーニング", "ニューラルネットワーク", "アルファ碁"]
 section: "ai"
 slug: "08-deep-learning-history"
 difficulty: "beginner"

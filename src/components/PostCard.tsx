@@ -25,20 +25,13 @@ export default function PostCard({ post }: PostCardProps) {
     return colors[level as keyof typeof colors] || colors.default;
   };
 
-  const getCategoryLabel = (category: string) => {
-    const labels = {
-      'ai-course': 'AIコース',
-      'tech': 'テクノロジー',
-      'design': 'デザイン',
-      'business': 'ビジネス',
-      'lifestyle': 'ライフスタイル'
-    };
-    return labels[category as keyof typeof labels] || category;
+  const getTagColor = () => {
+    return 'bg-gray-100 text-gray-600';
   };
 
   // Generate the correct URL based on section
   const getPostUrl = (post: Post) => {
-    const section = post.section || (post.category === 'ai-course' ? 'ai' : 'ai');
+    const section = post.section || 'ai';
     return `/${section}/posts/${post.slug}`;
   };
 
@@ -59,18 +52,17 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
           
           {/* タイトル */}
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors line-clamp-2">
-            {post.title}
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors h-12 flex items-start">
+            <span className="line-clamp-2">{post.title}</span>
           </h2>
           
-          {/* 日付とカテゴリタグ */}
-          <div className="flex items-center justify-between">
-            <time className="text-gray-400 text-sm">
-              {formatDate(post.date)}
-            </time>
-            <span className={`inline-block ${getLevelColor(post.level)} text-white text-xs font-medium px-2 py-1 rounded`}>
-              {getCategoryLabel(post.category)}
-            </span>
+          {/* タグ */}
+          <div className="flex flex-wrap gap-2 justify-end h-8 items-start">
+            {post.tags?.slice(0, 2).map((tag, index) => (
+              <span key={tag} className={`inline-block ${getTagColor()} text-xs font-medium px-2 py-1 rounded-full`}>
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </article>

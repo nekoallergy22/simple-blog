@@ -1,7 +1,7 @@
 ---
 title: "教師なし学習：次元削減"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["次元削減", "主成分分析", "t-SNE"]
 section: "ai"
 slug: "12-unsupervised-learning-dimensionality-reduction"
 difficulty: "beginner"

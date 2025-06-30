@@ -74,7 +74,7 @@ export function getPostsFromMarkdown(): Post[] {
         title: frontMatter.title || 'Untitled',
         content: content.trim(),
         slug: slug,
-        category: frontMatter.category || 'uncategorized',
+        tags: frontMatter.tags || [],
         section: frontMatter.section || section,
         date: frontMatter.date || new Date().toISOString().split('T')[0],
         difficulty: frontMatter.difficulty,

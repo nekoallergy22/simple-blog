@@ -1,7 +1,7 @@
 ---
 title: "機械学習の基本概念"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["機械学習", "スパムフィルター", "レコメンデーション"]
 section: "ai"
 slug: "07-machine-learning-basics"
 difficulty: "beginner"

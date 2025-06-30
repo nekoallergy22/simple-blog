@@ -1,8 +1,8 @@
 {
-  "totalPosts": 6,
+  "totalPosts": 13,
   "sections": {
     "ai": {
-      "count": 6,
+      "count": 13,
       "latestDate": 1751122800000,
       "posts": [
         {
@@ -34,25 +34,291 @@
           "slug": "ai-knowledge-representation-ontology",
           "title": "知識表現とオントロジー",
           "date": "2025-6-29"
+        },
+        {
+          "slug": "expert-systems-data-mining",
+          "title": "エキスパートシステムとデータマイニング",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "machine-learning-basics",
+          "title": "機械学習の基本概念",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "deep-learning-history",
+          "title": "ディープラーニングの歴史と発展",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "supervised-learning-classification",
+          "title": "教師あり学習：分類問題",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "supervised-learning-regression-ensemble",
+          "title": "教師あり学習：回帰問題とアンサンブル",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "unsupervised-learning-clustering",
+          "title": "教師なし学習：クラスタリング",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "unsupervised-learning-dimensionality-reduction",
+          "title": "教師なし学習：次元削減",
+          "date": "2025-6-29"
         }
       ]
     }
   },
-  "categories": {
-    "ai-course": {
-      "count": 6,
-      "section": "ai"
-    }
-  },
-  "lastUpdated": "2025-06-30T01:55:04.528Z",
+  "categories": {},
+  "lastUpdated": "2025-06-30T08:23:31.722Z",
   "stats": {
-    "totalPosts": 6,
+    "totalPosts": 13,
     "activeSections": 1,
     "latestPost": {
       "slug": "ai-summary",
       "title": "AI学習コース 完全ガイド",
       "date": "2025-6-29",
       "section": "ai"
+    }
+  },
+  "tags": {
+    "概要": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "カリキュラム": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ガイド": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "人工知能": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "AI定義": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "AI分類": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "シンギュラリティ": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "チューリングテスト": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "AI哲学": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "探索アルゴリズム": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "幅優先探索": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "モンテカルロ法": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ゲーム理論": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ミニマックス": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "αβ法": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "知識表現": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "オントロジー": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "セマンティックWeb": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "エキスパートシステム": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "データマイニング": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "MYCIN": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "機械学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "スパムフィルター": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "レコメンデーション": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ディープラーニング": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ニューラルネットワーク": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "アルファ碁": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "教師あり学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "分類": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "SVM": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "回帰": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "アンサンブル": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ランダムフォレスト": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "教師なし学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "クラスタリング": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "k-means法": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "次元削減": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "主成分分析": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "t-SNE": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
     }
   }
 }

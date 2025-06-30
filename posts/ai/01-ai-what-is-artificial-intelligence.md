@@ -1,7 +1,8 @@
 ---
 title: "人工知能の定義と分類"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["人工知能", "AI定義", "AI分類"]
+section: "ai"
 slug: "01-ai-what-is-artificial-intelligence"
 difficulty: "basic"
 number: 1

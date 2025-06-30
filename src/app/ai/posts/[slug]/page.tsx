@@ -183,19 +183,30 @@ export default async function PostPage({ params }: PostPageProps) {
               {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
-              <span
-                className={`inline-block ${getLevelColor(post.level)} text-white text-sm font-medium px-3 py-1 rounded-full`}
-              >
-                {post.category === "ai-course" ? "AIコース" : post.category}
-              </span>
-              <time className="text-gray-500 text-sm">
-                {formatDate(post.date)}
-              </time>
+          </div>
+
+          <div className="flex justify-end mb-4">
+            <div className="flex items-center text-gray-500 text-sm">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {formatDate(post.date)}
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {post.tags?.map((tag, index) => (
+                  <span
+                    key={tag}
+                    className="inline-block bg-gray-100 text-gray-600 text-sm font-medium px-3 py-1 rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
             <MarkdownRenderer content={post.content} />
           </div>
 

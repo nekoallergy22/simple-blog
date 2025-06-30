@@ -1,7 +1,7 @@
 ---
 title: "AI分野の根本的な問題"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["シンギュラリティ", "チューリングテスト", "AI哲学"]
 section: "ai"
 slug: "02-ai-fundamental-problems"
 difficulty: "basic"

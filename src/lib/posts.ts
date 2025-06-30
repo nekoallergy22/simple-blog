@@ -4,7 +4,7 @@ import {
   getPostsFromStatic, 
   getPostBySlugFromStatic, 
   getPostsBySectionFromStatic, 
-  getPostsByCategoryFromStatic 
+  getPostsByTagFromStatic 
 } from './static-posts';
 
 export async function getAllPosts(): Promise<Post[]> {
@@ -32,16 +32,16 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   return getPostBySlugFromMarkdown(slug);
 }
 
-export async function getPostsByCategory(category: string): Promise<Post[]> {
+export async function getPostsByTag(tag: string): Promise<Post[]> {
   // Try Static JSON first, fallback to markdown files
   try {
-    return await getPostsByCategoryFromStatic(category);
+    return await getPostsByTagFromStatic(tag);
   } catch (staticError) {
-    console.warn('Static JSON fallback failed for category:', category, staticError instanceof Error ? staticError.message : 'Unknown error');
+    console.warn('Static JSON fallback failed for tag:', tag, staticError instanceof Error ? staticError.message : 'Unknown error');
     
     // Fallback to markdown files
     const allPosts = getPostsFromMarkdown();
-    return allPosts.filter(post => post.category === category);
+    return allPosts.filter(post => post.tags?.includes(tag));
   }
 }
 

@@ -1,7 +1,7 @@
 ---
 title: "教師あり学習：回帰問題とアンサンブル"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["回帰", "アンサンブル", "ランダムフォレスト"]
 section: "ai"
 slug: "10-supervised-learning-regression-ensemble"
 difficulty: "beginner"

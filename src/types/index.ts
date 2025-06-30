@@ -3,7 +3,7 @@ export interface Post {
   title: string;
   content: string;
   slug: string;
-  category: string;
+  tags: string[];
   section?: string; // ai, python, datascience, tensorflow
   date: string;
   difficulty?: string;
@@ -37,7 +37,7 @@ export interface Category {
 export interface PostFrontMatter {
   title: string;
   date: string;
-  category: string;
+  tags: string[];
   section?: string;
   slug?: string;
   difficulty?: string;

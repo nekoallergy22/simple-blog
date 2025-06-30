@@ -1,7 +1,7 @@
 ---
 title: "エキスパートシステムとデータマイニング"
 date: "2025-6-29"
-category: "ai-course"
+tags: ["エキスパートシステム", "データマイニング", "MYCIN"]
 section: "ai"
 slug: "06-expert-systems-data-mining"
 difficulty: "beginner"

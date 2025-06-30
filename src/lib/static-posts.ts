@@ -130,14 +130,14 @@ export async function getPostsBySectionFromStatic(section: string): Promise<Post
 }
 
 /**
- * カテゴリ別記事取得
+ * タグ別記事取得
  */
-export async function getPostsByCategoryFromStatic(category: string): Promise<Post[]> {
+export async function getPostsByTagFromStatic(tag: string): Promise<Post[]> {
   try {
     const posts = await getPostsFromStatic();
-    return posts.filter(post => post.category === category);
+    return posts.filter(post => post.tags?.includes(tag));
   } catch (error) {
-    console.error('Error getting posts by category from static:', error);
+    console.error('Error getting posts by tag from static:', error);
     return [];
   }
 }
