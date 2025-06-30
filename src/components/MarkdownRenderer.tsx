@@ -2,6 +2,7 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -10,10 +11,20 @@ interface MarkdownRendererProps {
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  // Pre-process content to fix bold rendering issues
+  const preprocessContent = (text: string): string => {
+    // Convert ALL **bold** patterns to HTML to ensure consistent rendering
+    // This bypasses markdown parsing issues completely for bold text
+    return text.replace(/\*\*([^*]+?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+  };
+
+  const processedContent = preprocessContent(content);
+
   return (
     <div className="prose prose-lg max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           code({ className, children, ...props }: any) {
             const inline = props.inline;
@@ -116,9 +127,19 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
               {children}
             </td>
           ),
+          strong: ({ children }) => (
+            <strong className="font-bold text-gray-900">
+              {children}
+            </strong>
+          ),
+          em: ({ children }) => (
+            <em className="italic text-gray-800">
+              {children}
+            </em>
+          ),
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
