@@ -25,7 +25,7 @@ export default async function AICourse() {
   }, {} as Record<string, typeof posts>);
 
   const getCategoryInfo = (category: string) => {
-    const info = {
+    const info: Record<string, { title: string; description: string; color: string; barColor: string }> = {
       '目次': { title: '目次', description: 'AI学習コース完全ガイド - 全コースの体系的な学習ロードマップ', color: 'bg-amber-100 text-amber-800', barColor: 'bg-amber-500' },
       '基礎編': { title: '基礎編', description: 'AIの基本概念と機械学習の基礎を学ぶ', color: 'bg-green-100 text-green-800', barColor: 'bg-green-500' },
       '強化学習・評価編': { title: '強化学習・評価編', description: '強化学習、モデル評価、ニューラルネットワークの基礎', color: 'bg-blue-100 text-blue-800', barColor: 'bg-blue-500' },

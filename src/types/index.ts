@@ -7,6 +7,7 @@ export interface Post {
   section?: string; // ai, python, datascience, tensorflow
   date: string;
   difficulty?: string;
+  category?: string;
   level?: number;
   number?: number;
   createdAt: Date;
@@ -41,6 +42,7 @@ export interface PostFrontMatter {
   section?: string;
   slug?: string;
   difficulty?: string;
+  category?: string;
   level?: number;
   number?: number;
 }
