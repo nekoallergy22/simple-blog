@@ -25,9 +25,6 @@ export default function PostCard({ post }: PostCardProps) {
     return colors[level as keyof typeof colors] || colors.default;
   };
 
-  const getTagColor = () => {
-    return 'bg-gray-100 text-gray-600';
-  };
 
   // Generate the correct URL based on section
   const getPostUrl = (post: Post) => {
@@ -44,7 +41,7 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="p-6">
           {/* 記事番号 */}
           <div className="mb-3 flex justify-end">
-            {post.number && (
+            {typeof post.number === 'number' && (
               <span className="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-1 rounded">
                 No.{post.number.toString().padStart(2, '0')}
               </span>
@@ -56,14 +53,6 @@ export default function PostCard({ post }: PostCardProps) {
             <span className="line-clamp-2">{post.title}</span>
           </h2>
           
-          {/* タグ */}
-          <div className="flex flex-wrap gap-2 justify-end h-8 items-start">
-            {post.tags?.slice(0, 2).map((tag, index) => (
-              <span key={tag} className={`inline-block ${getTagColor()} text-xs font-medium px-2 py-1 rounded-full`}>
-                {tag}
-              </span>
-            ))}
-          </div>
         </div>
       </article>
     </Link>
