@@ -1,8 +1,8 @@
 {
-  "totalPosts": 13,
+  "totalPosts": 25,
   "sections": {
     "ai": {
-      "count": 13,
+      "count": 25,
       "latestDate": 1751122800000,
       "posts": [
         {
@@ -69,14 +69,74 @@
           "slug": "unsupervised-learning-dimensionality-reduction",
           "title": "教師なし学習：次元削減",
           "date": "2025-6-29"
+        },
+        {
+          "slug": "reinforcement-learning-foundation",
+          "title": "強化学習の基礎理論",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "reinforcement-learning-algorithms",
+          "title": "強化学習のアルゴリズム",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "model-evaluation-metrics",
+          "title": "モデル評価の基本指標",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "model-selection-cross-validation",
+          "title": "モデル選択と交差検証",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "neural-network-basic-structure",
+          "title": "ニューラルネットワークの基本構造",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "deep-learning-hardware",
+          "title": "ディープラーニングのハードウェア",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "activation-functions",
+          "title": "活性化関数の種類と特徴",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "softmax-function",
+          "title": "ソフトマックス関数と出力層",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "error-functions-basics",
+          "title": "誤差関数の基礎",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "advanced-error-functions",
+          "title": "高度な誤差関数",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "regularization-basics",
+          "title": "正則化の基本技術",
+          "date": "2025-6-29"
+        },
+        {
+          "slug": "dropout-structural-regularization",
+          "title": "ドロップアウトと構造的正則化",
+          "date": "2025-6-29"
         }
       ]
     }
   },
   "categories": {},
-  "lastUpdated": "2025-06-30T15:49:27.824Z",
+  "lastUpdated": "2025-07-01T02:40:26.447Z",
   "stats": {
-    "totalPosts": 13,
+    "totalPosts": 25,
     "activeSections": 1,
     "latestPost": {
       "slug": "ai-summary",
@@ -321,13 +381,13 @@
       ]
     },
     "ディープラーニング": {
-      "count": 1,
+      "count": 2,
       "sections": [
         "ai"
       ]
     },
     "ニューラルネットワーク": {
-      "count": 1,
+      "count": 4,
       "sections": [
         "ai"
       ]
@@ -357,7 +417,7 @@
       ]
     },
     "分類": {
-      "count": 1,
+      "count": 2,
       "sections": [
         "ai"
       ]
@@ -381,7 +441,7 @@
       ]
     },
     "回帰": {
-      "count": 1,
+      "count": 2,
       "sections": [
         "ai"
       ]
@@ -465,6 +525,372 @@
       ]
     },
     "特徴量選択": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "強化学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "マルコフ決定過程": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "価値関数": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "報酬": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "方策": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "Q学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "Actor-Critic": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "方策勾配法": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ε-greedy": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "UCB": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "混同行列": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "正解率": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "適合率": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "再現率": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "F値": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ROC曲線": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "AUC": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "交差検証": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "k分割交差検証": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "過学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "汎化性能": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "AIC": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "MSE": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "RMSE": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "MAE": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "パーセプトロン": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "多層パーセプトロン": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "隠れ層": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "深層学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "GPU": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "TPU": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "CPU": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ハードウェア": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "計算効率": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "活性化関数": {
+      "count": 2,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ReLU": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "シグモイド": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "tanh": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "勾配消失問題": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ソフトマックス": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "多クラス分類": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "確率分布": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "出力層": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "誤差関数": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "損失関数": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "交差エントロピー": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "平均二乗誤差": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "Contrastive Loss": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "Triplet Loss": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "KL散度": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "高度な損失関数": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "メトリック学習": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "正則化": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "L1正則化": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "L2正則化": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ラッソ回帰": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "リッジ回帰": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "過学習対策": {
+      "count": 2,
+      "sections": [
+        "ai"
+      ]
+    },
+    "ドロップアウト": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "構造的正則化": {
+      "count": 1,
+      "sections": [
+        "ai"
+      ]
+    },
+    "アンサンブル学習": {
       "count": 1,
       "sections": [
         "ai"

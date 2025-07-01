@@ -116,16 +116,9 @@ export async function getPostsBySectionFromStatic(section: string): Promise<Post
   } catch (error) {
     console.error(`Error fetching section ${section} from static:`, error);
     
-    // フォールバック: 全記事から絞り込み
-    try {
-      const allPosts = await getPostsFromStatic();
-      const sectionPosts = allPosts.filter(post => post.section === section);
-      sectionsCache[section] = sectionPosts;
-      return sectionPosts;
-    } catch (fallbackError) {
-      console.error('Fallback also failed:', fallbackError);
-      return [];
-    }
+    // フォールバック: 循環参照を避けるため、空配列を返す
+    console.error('Section fetch failed, returning empty array to avoid circular reference');
+    return [];
   }
 }
 
@@ -195,10 +188,11 @@ export function clearStaticCache(): void {
 
 /**
  * 開発環境でのキャッシュクリア
+ * setIntervalを削除してビルドハングを防ぐ
  */
-if (process.env.NODE_ENV === 'development') {
-  // 開発環境では一定時間でキャッシュをクリア
-  setInterval(() => {
-    clearStaticCache();
-  }, 30000); // 30秒
-}
+// if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+//   // 開発環境かつクライアントサイドでのみ実行
+//   setInterval(() => {
+//     clearStaticCache();
+//   }, 30000); // 30秒
+// }

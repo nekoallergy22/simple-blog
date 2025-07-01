@@ -189,6 +189,51 @@ Markdownで記事本文を記述
 4. **記事表示されない**: `npm run generate-json`実行、public/data/ファイル確認
 5. **型エラー**: Post interface変更時はsrc/types/index.ts更新必要
 6. **セクション表示問題**: frontmatterのsection fieldが正しく設定されているか確認
+7. **ビルドハング問題**: 下記の「ビルドハング対策」を参照
+
+### ビルドハング対策（重要）
+
+**原因と対策**：2025-07-01に発生した問題の解決策
+
+#### 主要原因
+1. **setInterval による無限プロセス**：`src/lib/static-posts.ts`内のsetIntervalがビルド時にNode.jsプロセスを生かし続ける
+2. **循環参照**：エラーハンドリング内で同じ関数を再帰呼び出しする
+3. **Webpackキャッシュ問題**：dependency snapshotting で無限ループ
+
+#### 必須チェック項目
+```bash
+# 1. setIntervalの確認（絶対にビルド時に実行してはいけない）
+grep -r "setInterval" src/lib/static-posts.ts
+
+# 2. 循環参照チェック
+grep -A10 -B5 "getPostsFromStatic" src/lib/static-posts.ts
+
+# 3. Webpackキャッシュ設定確認
+grep -A10 "webpack:" next.config.js
+```
+
+#### 対策済み設定
+- **setInterval削除**: `src/lib/static-posts.ts:199-204` をコメントアウト
+- **循環参照解消**: フォールバック処理で`return []`に変更
+- **Webpackキャッシュ無効化**: `next.config.js`で`config.cache = false`設定
+
+#### ビルドハング時の対処法
+```bash
+# 1. プロセス強制終了
+pkill -f "next build"
+pkill -f "webpack"
+
+# 2. キャッシュクリア
+rm -rf .next node_modules/.cache
+
+# 3. 上記設定を確認後、再ビルド
+npm run build
+```
+
+#### 予防策
+- **Timer類は絶対にサーバーサイドで使用しない**
+- **エラーハンドリングで同じ関数を再帰呼び出ししない**
+- **ビルド時はWebpackキャッシュを無効化する**
 
 ### デバッグコマンド
 ```bash

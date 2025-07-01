@@ -14,13 +14,19 @@ const nextConfig = {
   },
   
   // Server-side fs fallback configuration
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
       };
     }
+    
+    // Disable caching during builds to prevent hangs
+    if (!dev) {
+      config.cache = false;
+    }
+    
     return config;
   },
   
